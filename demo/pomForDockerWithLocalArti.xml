@@ -38,10 +38,12 @@
 		</dependency>
 
 		<!-- for adding a dependency with no license so it will be blocked by xray -->
+		<!--
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-gemfire</artifactId>
 		</dependency>
+		-->
 	</dependencies>
 
 	<build>
