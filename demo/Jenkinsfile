@@ -62,8 +62,8 @@ stage 'promoting'
 node{
   
   //Capturing Environment variables
-  def buildInfo = downloadBuildInfo
-//  def buildInfo = Artifactory.newBuildInfo()
+//  def buildInfo = downloadBuildInfo
+  def buildInfo = Artifactory.newBuildInfo()
   
   buildInfo.env.capture = true
   buildInfo.env.collect()
