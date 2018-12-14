@@ -34,7 +34,7 @@ node{
             "files": [
                 {
                     "pattern": "myzips/*.jar",
-                    "target": "myPromotionRepo",
+                    "target": "myUploadRepo",
                     "props": "source=from my pipline;p2=v2"
                 }
             ]
@@ -57,5 +57,40 @@ node{
     echo '==========================after publishing'
 
 }
+
+stage 'promoting'
+node{
+  //Capturing Environment variables
+  def buildInfo = downloadBuildInfo
+    buildInfo.env.capture = true
+    buildInfo.env.collect()
+    buildInfo.retention maxBuilds: 10, maxDays: 7, deleteBuildArtifacts: true
+
+    // Build Promotion Section
+    def promotionConfig = [
+        // Mandatory parameters
+        'buildName'          : buildInfo.name,
+        'buildNumber'        : buildInfo.number,
+        'targetRepo'         : 'myPromotionRepo',
+
+        // Optional parameters
+        'comment'            : 'PROMOTION SUCCESSFULLY COMPLETED',
+        'sourceRepo'         : 'myUploadRepo',
+        'status'             : 'Promoted',
+        'includeDependencies': false,
+        'copy'               : false,
+        // 'failFast' is true by default.
+        // Set it to false, if you don't want the promotion to abort upon receiving the first error.
+        'failFast'           : true
+    ]
+
+    // Promote build
+    server.promote promotionConfig //this promotes the build automatically to the target specified in promotionConfig 
+    //Artifactory.addInteractivePromotion server: server, promotionConfig: promotionConfig, displayName: "Promotions Time" //this need human interaction to promote
+    echo "=============== Promotions are done"
+}
+
+
+
 
 echo '==============My Pipeline is finishing ==============='
