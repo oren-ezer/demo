@@ -1,0 +1,61 @@
+echo '==============My Pipeline is starting ==============='
+stage 'building'
+node {
+//   git url: 'https://github.com/jglick/simple-maven-project-with-tests.git'
+  git url: 'https://github.com/oren-ezer/demo.git'
+  
+  sh 'ls -la'
+  
+  def mvnHome = tool 'dockerMaven'
+  sh "${mvnHome}/bin/mvn -f ./demo/pomForDockerWithLocalArti.xml -s /usr/jfrog/settingsLocalArtifactory.xml -B clean deploy"
+//   sh "${mvnHome}/bi  n/mvn -f ./demo -B verify"
+  
+}
+
+def downloadBuildInfo, uploadBuildInfo
+def server = Artifactory.server('arti')
+stage 'downloading'
+node{
+    def downloadSpec = """{
+        "files": [
+            {
+             "pattern": "mylocalrepo/demo-0.0.1-20181214*.jar",
+            "target": "myzips/"
+            }
+        ]
+    }"""
+    downloadBuildInfo = server.download spec: downloadSpec
+}
+
+stage 'uploading'
+node{
+        def uploadSpec =
+            '''{
+            "files": [
+                {
+                    "pattern": "myzips/*.jar",
+                    "target": "myPromotionRepo",
+                    "props": "source=from my pipline;p2=v2"
+                }
+            ]
+        }'''
+echo '==========================after spec'
+    // Upload to Artifactory.
+    uploadBuildInfo = server.upload spec: uploadSpec
+echo '==========================after upload'
+
+}
+
+stage 'publishing'
+node{
+    // Merge the upload and download build-info objects.
+    downloadBuildInfo.append uploadBuildInfo
+    echo '==========================after appending'
+
+    // Publish the build to Artifactory
+    server.publishBuildInfo downloadBuildInfo
+    echo '==========================after publishing'
+
+}
+
+echo '==============My Pipeline is finishing ==============='
