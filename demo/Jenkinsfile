@@ -27,7 +27,7 @@ node{
   downloadBuildInfo = server.download spec: downloadSpec
   echo '==========================after download'
 }
-
+/*
 stage 'uploading'
 node{
         def uploadSpec =
@@ -94,6 +94,6 @@ node{
 }
 
 
-
+*/
 
 echo '==============My Pipeline is finishing ==============='
