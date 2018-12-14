@@ -16,15 +16,16 @@ def downloadBuildInfo, uploadBuildInfo
 def server = Artifactory.server('arti')
 stage 'downloading'
 node{
-    def downloadSpec = """{
-        "files": [
-            {
-             "pattern": "mylocalrepo/demo-0.0.1-20181214*.jar",
-            "target": "myzips/"
-            }
-        ]
-    }"""
-    downloadBuildInfo = server.download spec: downloadSpec
+  def downloadSpec = """{
+      "files": [
+          {
+           "pattern": "mylocalrepo/demo-0.0.1-20181214*.jar",
+          "target": "myzips/"
+          }
+      ]
+  }"""
+  downloadBuildInfo = server.download spec: downloadSpec
+  echo '==========================after upload'
 }
 
 stage 'uploading'
@@ -39,7 +40,6 @@ node{
                 }
             ]
         }'''
-echo '==========================after spec'
     // Upload to Artifactory.
     uploadBuildInfo = server.upload spec: uploadSpec
 echo '==========================after upload'
@@ -54,7 +54,7 @@ node{
 
     // Publish the build to Artifactory
     server.publishBuildInfo downloadBuildInfo
-    echo '==========================after publishing'
+    echo '==========================after publishing build info'
 
 }
 
@@ -62,8 +62,8 @@ stage 'promoting'
 node{
   
   //Capturing Environment variables
-//  def buildInfo = downloadBuildInfo
-  def buildInfo = Artifactory.newBuildInfo()
+  def buildInfo = downloadBuildInfo
+//  def buildInfo = Artifactory.newBuildInfo()
   
   buildInfo.env.capture = true
   buildInfo.env.collect()
