@@ -78,7 +78,8 @@
       </snapshots>
       <id>jcenterrepokey</id>
       <name>jcenterrepokey</name>
-      <url>http://localhost:8081/artifactory/jcenterrepokey</url>
+<!--      <url>http://localhost:8081/artifactory/jcenterrepokey</url> -->
+      <url>https://artifactory-orendemo.jfrogdev.co/myjcenterrepo</url>
       <layout>default</layout>
     </repository>
   </repositories>
@@ -88,12 +89,15 @@
 		<repository>
 			<id>mylocalrepo</id>
 			<name>McOrens-MBP.jfrog.internal-releases</name>
-			<url>http://localhost:8081/artifactory/mylocalrepo</url>
+<!--			<url>http://localhost:8081/artifactory/mylocalrepo</url> -->
+			<url>https://artifactory-orendemo.jfrogdev.co/mylocalrepo</url>
+			
 		</repository>
 		<snapshotRepository>
 			<id>mylocalrepo</id>
 			<name>McOrens-MBP.jfrog.internal-snapshots</name>
-			<url>http://localhost:8081/artifactory/mylocalrepo</url>
+<!--			<url>http://localhost:8081/artifactory/mylocalrepo</url> -->
+			<url>https://artifactory-orendemo.jfrogdev.co/mylocalrepo</url>
 		</snapshotRepository>
 	</distributionManagement>
 </project>
