@@ -79,7 +79,7 @@
       <id>jcenterrepokey</id>
       <name>jcenterrepokey</name>
 <!--      <url>http://localhost:8081/artifactory/jcenterrepokey</url> -->
-      <url>https://artifactory-orendemo.jfrogdev.co/myjcenterrepo</url>
+      <url>https://artifactory-orendemo.jfrogdev.co/jcenter</url>
       <layout>default</layout>
     </repository>
   </repositories>
