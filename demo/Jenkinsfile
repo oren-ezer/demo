@@ -20,12 +20,11 @@ node{
   def downloadSpec = """{
       "files": [
           {
-           "pattern": "mylocalrepo/demo-0.0.1-20181213*.pom",
+           "pattern": "mylocalrepo/demo-0.0.1-20181225*.pom",
           "target": "myzips/"
           }
       ]
   }"""
-  echo '==========================before download'
   downloadBuildInfo = server.download spec: downloadSpec
   echo '==========================after download'
 }
