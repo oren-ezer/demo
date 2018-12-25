@@ -7,7 +7,7 @@ node {
   sh 'ls -la'
   
   def mvnHome = tool 'dockerMaven'
-  sh "${mvnHome}/bin/mvn -f ./demo/pomForDockerWithRemoteArti.xml -s /usr/jfrog/settingsLocalArtifactory.xml -B clean deploy"
+  sh "${mvnHome}/bin/mvn -f ./demo/pomForDockerWithRemoteArti.xml -s /usr/jfrog/settingsRemoteArtifactory.xml -B clean deploy"
 //   sh "${mvnHome}/bi  n/mvn -f ./demo -B verify"
   
 }
