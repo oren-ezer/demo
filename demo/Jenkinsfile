@@ -65,7 +65,7 @@ node{
     echo '==========================after publishing build info'
 
 }
-/*
+
 stage 'promoting'
 node{
   
@@ -101,7 +101,5 @@ node{
     echo "=============== Promotions are done"
 }
 
-
-*/
 
 echo '==============My Pipeline is finishing ==============='
