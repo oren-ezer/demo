@@ -12,7 +12,7 @@ node {
   
 }
 
-echo '==========================before download'
+
 def downloadBuildInfo, uploadBuildInfo
 def server = Artifactory.server('arti')
 stage 'downloading'
@@ -25,6 +25,7 @@ node{
           }
       ]
   }"""
+  echo '==========================before download'
   downloadBuildInfo = server.download spec: downloadSpec
   echo '==========================after download'
 }
