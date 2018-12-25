@@ -20,7 +20,7 @@ node{
   def downloadSpec = """{
       "files": [
           {
-           "pattern": "mylocalrepo/demo-0.0.1-20181225*.pom",
+           "pattern": "mylocalrepo/demo-0.0.1*.pom",
           "target": "myzips/"
           }
       ]
