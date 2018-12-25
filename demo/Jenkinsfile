@@ -13,7 +13,7 @@ node {
 }
 node {
 echo '==========================before writing'
-sh 'echo "test" > /myzips/test.txt'
+sh 'echo "mylocalrepo/*demo-0.0.1*.pom" > /myzips/test.txt'
 sh 'cat /myzips/test.txt'
 echo '==========================after writing'
 }
@@ -24,7 +24,7 @@ node{
   def downloadSpec = """{
       "files": [
           {
-           "pattern": "demo-0.0.1*.pom",
+           "pattern": "mylocalrepo/*demo-0.0.1*.pom",
           "target": "/myzips/"
           }
       ]
