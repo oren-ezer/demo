@@ -76,8 +76,8 @@
         <updatePolicy>never</updatePolicy>
         <checksumPolicy>fail</checksumPolicy>
       </snapshots>
-      <id>jcenterrepokey</id>
-      <name>jcenterrepokey</name>
+      <id>jcenter</id>
+      <name>jcenter</name>
 <!--      <url>http://localhost:8081/artifactory/jcenterrepokey</url> -->
       <url>https://artifactory-orendemo.jfrogdev.co/jcenter</url>
       <layout>default</layout>
