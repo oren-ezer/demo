@@ -53,7 +53,7 @@ node{
 echo '==========================after upload'
 
 }
-/*
+
 stage 'publishing'
 node{
     // Merge the upload and download build-info objects.
@@ -65,7 +65,7 @@ node{
     echo '==========================after publishing build info'
 
 }
-
+/*
 stage 'promoting'
 node{
   
