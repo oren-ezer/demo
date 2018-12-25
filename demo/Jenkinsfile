@@ -12,6 +12,10 @@ node {
   
 }
 
+echo '==========================before writing'
+sh 'echo "test" > /myzips/test.txt'
+sh 'cat /myzips/test.txt'
+echo '==========================after writing'
 
 def downloadBuildInfo, uploadBuildInfo
 def server = Artifactory.server('arti')
