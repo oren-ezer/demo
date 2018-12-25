@@ -12,13 +12,15 @@ node {
   
 }
 node {
-echo '==========================before writing'
-sh 'echo "mylocalrepo/*demo-0.0.1*.pom" > /myzips/test.txt'
-sh 'cat /myzips/test.txt'
-echo '==========================after writing'
+
+  sh 'echo "mylocalrepo/*demo-0.0.1*.pom" > /myzips/test.txt'
+  sh 'cat /myzips/test.txt'
+  echo '==========================after writing'
 }
+
 def downloadBuildInfo, uploadBuildInfo
 def server = Artifactory.server('arti')
+
 stage 'downloading'
 node{
   def downloadSpec = """{
@@ -31,16 +33,16 @@ node{
   }"""
   downloadBuildInfo = server.download spec: downloadSpec
   echo '==========================after download'
-  echo downloadBuildInfo as String
+
 }
-/*
+
 stage 'uploading'
 node{
         def uploadSpec =
             '''{
             "files": [
                 {
-                    "pattern": "myzips/*.jar",
+                    "pattern": "/myzips/*.pom",
                     "target": "myUploadRepo",
                     "props": "source=from my pipline;p2=v2"
                 }
@@ -51,7 +53,7 @@ node{
 echo '==========================after upload'
 
 }
-
+/*
 stage 'publishing'
 node{
     // Merge the upload and download build-info objects.
