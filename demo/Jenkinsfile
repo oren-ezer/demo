@@ -27,6 +27,7 @@ node{
   }"""
   downloadBuildInfo = server.download spec: downloadSpec
   echo '==========================after download'
+  echo downloadBuildInfo as String
 }
 /*
 stage 'uploading'
