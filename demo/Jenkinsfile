@@ -42,9 +42,9 @@ node{
             '''{
             "files": [
                 {
-                    "pattern": "/myzips/*.pom",
+                    "pattern": "/myzips/test.txt",
                     "target": "myUploadRepo",
-                    "props": "source=from my pipline;p2=v2"
+                    "props": "source=test from my pipline;p2=v2"
                 }
             ]
         }'''
