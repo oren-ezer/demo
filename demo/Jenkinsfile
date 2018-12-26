@@ -42,7 +42,7 @@ node{
             '''{
             "files": [
                 {
-                    "pattern": "/myzips/test.txt",
+                    "pattern": "/myzips/*.pom",
                     "target": "myUploadRepo",
                     "props": "source=test from my pipline;p2=v2"
                 }
@@ -89,7 +89,7 @@ node{
         'sourceRepo'         : 'myUploadRepo',
         'status'             : 'Promoted',
         'includeDependencies': false,
-        'copy'               : false,
+        'copy'               : true,
         // 'failFast' is true by default.
         // Set it to false, if you don't want the promotion to abort upon receiving the first error.
         'failFast'           : true
