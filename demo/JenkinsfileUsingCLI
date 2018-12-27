@@ -16,6 +16,13 @@ echo '==============build context created==============='
 echo '==============building with maven==============='
 stage 'maven build'
 node {
+echo '================================================='
+echo '================================================='
+echo '================================================='
+    sh 'echo $M2_HOME'
+echo '================================================='
+echo '================================================='
+echo '================================================='
     git url: 'https://github.com/oren-ezer/demo.git'
     def mvnHome = tool 'dockerMaven'
     sh "${mvnHome}/bin/mvn -f ./demo/pomForDockerWithRemoteArti.xml -s /usr/jfrog/settingsRemoteArtifactory.xml -B clean deploy"
@@ -30,23 +37,15 @@ node {
 }
 echo '==============maven build finished==============='
 
+echo '==============publishing build==============='
 stage 'publish build'
 node {
     sh "/jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
 }
-echo '==============build context created==============='
+echo '==============build published==============='
 
 
 
-
-stage 'building'
-node {
-  git url: 'https://github.com/oren-ezer/demo.git'
-  
- // def mvnHome = tool 'dockerMaven'
- // sh "${mvnHome}/bin/mvn -f ./demo/pomForDockerWithRemoteArti.xml -s /usr/jfrog/settingsRemoteArtifactory.xml -B clean deploy"
-
-}
 /*
 def downloadBuildInfo, uploadBuildInfo
 def server = Artifactory.server('arti')
