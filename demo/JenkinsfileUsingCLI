@@ -14,7 +14,7 @@ pipeline{
         stage ('dummy'){
             steps{
 
-                node {
+                step {
                     sh 'pwd'
                 }
             }
@@ -23,7 +23,7 @@ pipeline{
         stage ('build ctx'){
             step{
                 echo '==============creating build context==============='
-                node {
+                step {
                     sh "/jfrog rt bce myCliBuild 127"
                 }
                 echo '==============build context created==============='
@@ -33,7 +33,7 @@ pipeline{
         stage ('maven build'){
             steps{
                 echo '==============building with maven==============='
-                node {
+                step {
                     echo '================================================='
                     echo '================================================='
                     echo '================================================='
@@ -62,7 +62,7 @@ pipeline{
         stage ('publish build'){
             steps{
                 echo '==============publishing build==============='
-                node {
+                step {
                     sh "/jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
                 }
                 echo '==============build published==============='
