@@ -16,7 +16,7 @@ echo '==============build context created==============='
 echo '==============building with maven==============='
 stage 'maven build'
 node {
-env.M2_HOME=./var/jenkins_home/tools/hudson.tasks.Maven_MavenInstallation/dockerMaven/
+env.M2_HOME="./var/jenkins_home/tools/hudson.tasks.Maven_MavenInstallation/dockerMaven/"
 echo '================================================='
 echo '================================================='
 echo '================================================='
