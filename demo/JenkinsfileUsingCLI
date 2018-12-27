@@ -1,23 +1,32 @@
 echo '==============My Pipeline is starting ==============='
+
+
+echo '==============creating build context==============='
+stage 'build ctx'
+node {
+    jfrog rt bce myCliBuild 127
+}
+echo '==============build context created==============='
+
+stage 'publish build'
+node {
+    jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927
+}
+echo '==============build context created==============='
+
+
+
+
+
 stage 'building'
 node {
-//   git url: 'https://github.com/jglick/simple-maven-project-with-tests.git'
   git url: 'https://github.com/oren-ezer/demo.git'
   
-  sh 'ls -la'
-  
-  def mvnHome = tool 'dockerMaven'
-  sh "${mvnHome}/bin/mvn -f ./demo/pomForDockerWithRemoteArti.xml -s /usr/jfrog/settingsRemoteArtifactory.xml -B clean deploy"
-//   sh "${mvnHome}/bi  n/mvn -f ./demo -B verify"
-  
-}
-node {
+ // def mvnHome = tool 'dockerMaven'
+ // sh "${mvnHome}/bin/mvn -f ./demo/pomForDockerWithRemoteArti.xml -s /usr/jfrog/settingsRemoteArtifactory.xml -B clean deploy"
 
-  sh 'echo "mylocalrepo/*demo-0.0.1*.pom" > /myzips/test.txt'
-  sh 'cat /myzips/test.txt'
-  echo '==========================after writing'
 }
-
+/*
 def downloadBuildInfo, uploadBuildInfo
 def server = Artifactory.server('arti')
 
@@ -33,7 +42,6 @@ node{
   }"""
   downloadBuildInfo = server.download spec: downloadSpec
   echo '==========================after download'
-
 }
 
 stage 'uploading'
@@ -48,10 +56,8 @@ node{
                 }
             ]
         }'''
-    // Upload to Artifactory.
     uploadBuildInfo = server.upload spec: uploadSpec
 echo '==========================after upload'
-
 }
 
 stage 'publishing'
@@ -63,13 +69,11 @@ node{
     // Publish the build to Artifactory
     server.publishBuildInfo downloadBuildInfo
     echo '==========================after publishing build info'
-
 }
 
 stage 'promoting'
 node{
-  
-  //Capturing Environment variables
+//  Capturing Environment variables
 //  def buildInfo = downloadBuildInfo
   def buildInfo = Artifactory.newBuildInfo()
   
@@ -101,5 +105,5 @@ node{
     echo "=============== Promotions are done"
 }
 
-
+*/
 echo '==============My Pipeline is finishing ==============='
