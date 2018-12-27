@@ -19,7 +19,7 @@ pipeline{
                 }
             }
         }
-
+/*
         stage ('build ctx'){
             step{
                 echo '==============creating build context==============='
@@ -72,7 +72,7 @@ pipeline{
 
 
 
-        /*
+       
         def downloadBuildInfo, uploadBuildInfo
         def server = Artifactory.server('arti')
 
