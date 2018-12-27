@@ -135,6 +135,6 @@ stages{
         //Artifactory.addInteractivePromotion server: server, promotionConfig: promotionConfig, displayName: "Promotions Time" //this need human interaction to promote
         echo "=============== Promotions are done"
     }
+    */
 }
-*/
 echo '==============My Pipeline is finishing ==============='
