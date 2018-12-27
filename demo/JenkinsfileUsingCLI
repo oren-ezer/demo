@@ -17,7 +17,7 @@ stage 'maven build'
 node {
     git url: 'https://github.com/oren-ezer/demo.git'
 
-    sh 'find -type f -name pomForDockerWithRemoteArti.xml
+    sh 'find -type f -name pomForDockerWithRemoteArti.xml'
 
     //sh "/jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
     //sh "/jfrog rt mvn "clean install -f /Users/orenezer/MyData/repos/demo/demo/pomForDockerWithRemoteArti.xml -DskipTests" /Users/orenezer/MyData/tools/myJfrogCliBuilds/mymvn/configFile.txt --build-name=pdfBuild --build-number=27
