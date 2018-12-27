@@ -22,7 +22,7 @@ node {
 //creating the config file
     sh 'echo "version: 1\ntype: maven\nresolver:\n  snapshotRepo: jcenter\n  releaseRepo: jcenter\n  serverID: oren_remote\ndeployer:\n  snapshotRepo: mylocalrepo\n  releaseRepo: mylocalrepo\n  serverID: oren_remote" > ./config.txt'
 //executing the build with the config file
-    sh '/jfrog rt mvn "clean install -f ./demo/pomForDockerWithRemoteArti.xml -DskipTests" ./config.txt --build-name=myCliBuild --build-number=127 
+    sh '/jfrog rt mvn "clean install -f ./demo/pomForDockerWithRemoteArti.xml -DskipTests" ./config.txt --build-name=myCliBuild --build-number=127' 
     //--url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927'
 }
 echo '==============maven build finished==============='
