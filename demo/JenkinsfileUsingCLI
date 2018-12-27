@@ -1,0 +1,105 @@
+echo '==============My Pipeline is starting ==============='
+stage 'building'
+node {
+//   git url: 'https://github.com/jglick/simple-maven-project-with-tests.git'
+  git url: 'https://github.com/oren-ezer/demo.git'
+  
+  sh 'ls -la'
+  
+  def mvnHome = tool 'dockerMaven'
+  sh "${mvnHome}/bin/mvn -f ./demo/pomForDockerWithRemoteArti.xml -s /usr/jfrog/settingsRemoteArtifactory.xml -B clean deploy"
+//   sh "${mvnHome}/bi  n/mvn -f ./demo -B verify"
+  
+}
+node {
+
+  sh 'echo "mylocalrepo/*demo-0.0.1*.pom" > /myzips/test.txt'
+  sh 'cat /myzips/test.txt'
+  echo '==========================after writing'
+}
+
+def downloadBuildInfo, uploadBuildInfo
+def server = Artifactory.server('arti')
+
+stage 'downloading'
+node{
+  def downloadSpec = """{
+      "files": [
+          {
+           "pattern": "mylocalrepo/*demo-0.0.1*.pom",
+          "target": "/myzips/"
+          }
+      ]
+  }"""
+  downloadBuildInfo = server.download spec: downloadSpec
+  echo '==========================after download'
+
+}
+
+stage 'uploading'
+node{
+        def uploadSpec =
+            '''{
+            "files": [
+                {
+                    "pattern": "/myzips/*.pom",
+                    "target": "myUploadRepo",
+                    "props": "source=test from my pipline;p2=v2"
+                }
+            ]
+        }'''
+    // Upload to Artifactory.
+    uploadBuildInfo = server.upload spec: uploadSpec
+echo '==========================after upload'
+
+}
+
+stage 'publishing'
+node{
+    // Merge the upload and download build-info objects.
+    downloadBuildInfo.append uploadBuildInfo
+    echo '==========================after appending'
+
+    // Publish the build to Artifactory
+    server.publishBuildInfo downloadBuildInfo
+    echo '==========================after publishing build info'
+
+}
+
+stage 'promoting'
+node{
+  
+  //Capturing Environment variables
+//  def buildInfo = downloadBuildInfo
+  def buildInfo = Artifactory.newBuildInfo()
+  
+  buildInfo.env.capture = true
+  buildInfo.env.collect()
+  buildInfo.retention maxBuilds: 10, maxDays: 7, deleteBuildArtifacts: true
+
+    // Build Promotion Section
+    def promotionConfig = [
+        // Mandatory parameters
+        'buildName'          : buildInfo.name,
+        'buildNumber'        : buildInfo.number,
+        'targetRepo'         : 'myPromotionRepo',
+
+        // Optional parameters
+        'comment'            : 'PROMOTION SUCCESSFULLY COMPLETED',
+        'sourceRepo'         : 'myUploadRepo',
+        'status'             : 'Promoted',
+        'includeDependencies': false,
+        'copy'               : true,
+        // 'failFast' is true by default.
+        // Set it to false, if you don't want the promotion to abort upon receiving the first error.
+        'failFast'           : true
+    ]
+
+    // Promote build
+    server.promote promotionConfig //this promotes the build automatically to the target specified in promotionConfig 
+    //Artifactory.addInteractivePromotion server: server, promotionConfig: promotionConfig, displayName: "Promotions Time" //this need human interaction to promote
+    echo "=============== Promotions are done"
+}
+
+
+echo '==============My Pipeline is finishing ==============='
