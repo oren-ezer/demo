@@ -5,132 +5,136 @@ pipeline{
         M2_HOME ="./var/jenkins_home/tools/hudson.tasks.Maven_MavenInstallation/dockerMaven/"
     }
 }
-stage 'dummy'
-node {
-    sh 'pwd'
+
+stages{
+
+
+    stage 'dummy'
+    node {
+        sh 'pwd'
+    }
+
+
+    echo '==============creating build context==============='
+    stage 'build ctx'
+    node {
+        sh "/jfrog rt bce myCliBuild 127"
+    }
+    echo '==============build context created==============='
+
+    echo '==============building with maven==============='
+    stage 'maven build'
+    node {
+    echo '================================================='
+    echo '================================================='
+    echo '================================================='
+    // sh 'export M2_HOME=./var/jenkins_home/tools/hudson.tasks.Maven_MavenInstallation/dockerMaven/'  
+        sh 'echo $M2_HOME'
+    echo '================================================='
+    echo '================================================='
+    echo '================================================='
+        git url: 'https://github.com/oren-ezer/demo.git'
+
+        def mvnHome = tool 'dockerMaven'
+        sh "${mvnHome}/bin/mvn -f ./demo/pomForDockerWithRemoteArti.xml -s /usr/jfrog/settingsRemoteArtifactory.xml -B clean deploy"
+
+    // a temporary command just to find out where the file is
+    //    sh 'find -type f -name pomForDockerWithRemoteArti.xml
+    //creating the config file
+    //    sh 'echo "version: 1\ntype: maven\nresolver:\n  snapshotRepo: jcenter\n  releaseRepo: jcenter\n  serverID: oren_remote\ndeployer:\n  snapshotRepo: mylocalrepo\n  releaseRepo: mylocalrepo\n  serverID: oren_remote" > ./config.txt'
+    //executing the build with the config file
+    //    sh '/jfrog rt mvn "clean install -f ./demo/pomForDockerWithRemoteArti.xml -DskipTests" ./config.txt --build-name=myCliBuild --build-number=127' 
+        //--url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927'
+    }
+    echo '==============maven build finished==============='
+
+    echo '==============publishing build==============='
+    stage 'publish build'
+    node {
+        sh "/jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
+    }
+    echo '==============build published==============='
+
+
+
+    /*
+    def downloadBuildInfo, uploadBuildInfo
+    def server = Artifactory.server('arti')
+
+    stage 'downloading'
+    node{
+    def downloadSpec = """{
+        "files": [
+            {
+            "pattern": "mylocalrepo/*demo-0.0.1*.pom",
+            "target": "/myzips/"
+            }
+        ]
+    }"""
+    downloadBuildInfo = server.download spec: downloadSpec
+    echo '==========================after download'
+    }
+
+    stage 'uploading'
+    node{
+            def uploadSpec =
+                '''{
+                "files": [
+                    {
+                        "pattern": "/myzips/*.pom",
+                        "target": "myUploadRepo",
+                        "props": "source=test from my pipline;p2=v2"
+                    }
+                ]
+            }'''
+        uploadBuildInfo = server.upload spec: uploadSpec
+    echo '==========================after upload'
+    }
+
+    stage 'publishing'
+    node{
+        // Merge the upload and download build-info objects.
+        downloadBuildInfo.append uploadBuildInfo
+        echo '==========================after appending'
+
+        // Publish the build to Artifactory
+        server.publishBuildInfo downloadBuildInfo
+        echo '==========================after publishing build info'
+    }
+
+    stage 'promoting'
+    node{
+    //  Capturing Environment variables
+    //  def buildInfo = downloadBuildInfo
+    def buildInfo = Artifactory.newBuildInfo()
+
+    buildInfo.env.capture = true
+    buildInfo.env.collect()
+    buildInfo.retention maxBuilds: 10, maxDays: 7, deleteBuildArtifacts: true
+
+        // Build Promotion Section
+        def promotionConfig = [
+            // Mandatory parameters
+            'buildName'          : buildInfo.name,
+            'buildNumber'        : buildInfo.number,
+            'targetRepo'         : 'myPromotionRepo',
+
+            // Optional parameters
+            'comment'            : 'PROMOTION SUCCESSFULLY COMPLETED',
+            'sourceRepo'         : 'myUploadRepo',
+            'status'             : 'Promoted',
+            'includeDependencies': false,
+            'copy'               : true,
+            // 'failFast' is true by default.
+            // Set it to false, if you don't want the promotion to abort upon receiving the first error.
+            'failFast'           : true
+        ]
+
+        // Promote build
+        server.promote promotionConfig //this promotes the build automatically to the target specified in promotionConfig 
+        //Artifactory.addInteractivePromotion server: server, promotionConfig: promotionConfig, displayName: "Promotions Time" //this need human interaction to promote
+        echo "=============== Promotions are done"
+    }
 }
-
-
-echo '==============creating build context==============='
-stage 'build ctx'
-node {
-    sh "/jfrog rt bce myCliBuild 127"
-}
-echo '==============build context created==============='
-
-echo '==============building with maven==============='
-stage 'maven build'
-node {
-echo '================================================='
-echo '================================================='
-echo '================================================='
-// sh 'export M2_HOME=./var/jenkins_home/tools/hudson.tasks.Maven_MavenInstallation/dockerMaven/'  
-    sh 'echo $M2_HOME'
-echo '================================================='
-echo '================================================='
-echo '================================================='
-    git url: 'https://github.com/oren-ezer/demo.git'
-
-    def mvnHome = tool 'dockerMaven'
-    sh "${mvnHome}/bin/mvn -f ./demo/pomForDockerWithRemoteArti.xml -s /usr/jfrog/settingsRemoteArtifactory.xml -B clean deploy"
-
-// a temporary command just to find out where the file is
-//    sh 'find -type f -name pomForDockerWithRemoteArti.xml
-//creating the config file
-//    sh 'echo "version: 1\ntype: maven\nresolver:\n  snapshotRepo: jcenter\n  releaseRepo: jcenter\n  serverID: oren_remote\ndeployer:\n  snapshotRepo: mylocalrepo\n  releaseRepo: mylocalrepo\n  serverID: oren_remote" > ./config.txt'
-//executing the build with the config file
-//    sh '/jfrog rt mvn "clean install -f ./demo/pomForDockerWithRemoteArti.xml -DskipTests" ./config.txt --build-name=myCliBuild --build-number=127' 
-    //--url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927'
-}
-echo '==============maven build finished==============='
-
-echo '==============publishing build==============='
-stage 'publish build'
-node {
-    sh "/jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
-}
-echo '==============build published==============='
-
-
-
-/*
-def downloadBuildInfo, uploadBuildInfo
-def server = Artifactory.server('arti')
-
-stage 'downloading'
-node{
-def downloadSpec = """{
-    "files": [
-        {
-        "pattern": "mylocalrepo/*demo-0.0.1*.pom",
-        "target": "/myzips/"
-        }
-    ]
-}"""
-downloadBuildInfo = server.download spec: downloadSpec
-echo '==========================after download'
-}
-
-stage 'uploading'
-node{
-        def uploadSpec =
-            '''{
-            "files": [
-                {
-                    "pattern": "/myzips/*.pom",
-                    "target": "myUploadRepo",
-                    "props": "source=test from my pipline;p2=v2"
-                }
-            ]
-        }'''
-    uploadBuildInfo = server.upload spec: uploadSpec
-echo '==========================after upload'
-}
-
-stage 'publishing'
-node{
-    // Merge the upload and download build-info objects.
-    downloadBuildInfo.append uploadBuildInfo
-    echo '==========================after appending'
-
-    // Publish the build to Artifactory
-    server.publishBuildInfo downloadBuildInfo
-    echo '==========================after publishing build info'
-}
-
-stage 'promoting'
-node{
-//  Capturing Environment variables
-//  def buildInfo = downloadBuildInfo
-def buildInfo = Artifactory.newBuildInfo()
-
-buildInfo.env.capture = true
-buildInfo.env.collect()
-buildInfo.retention maxBuilds: 10, maxDays: 7, deleteBuildArtifacts: true
-
-    // Build Promotion Section
-    def promotionConfig = [
-        // Mandatory parameters
-        'buildName'          : buildInfo.name,
-        'buildNumber'        : buildInfo.number,
-        'targetRepo'         : 'myPromotionRepo',
-
-        // Optional parameters
-        'comment'            : 'PROMOTION SUCCESSFULLY COMPLETED',
-        'sourceRepo'         : 'myUploadRepo',
-        'status'             : 'Promoted',
-        'includeDependencies': false,
-        'copy'               : true,
-        // 'failFast' is true by default.
-        // Set it to false, if you don't want the promotion to abort upon receiving the first error.
-        'failFast'           : true
-    ]
-
-    // Promote build
-    server.promote promotionConfig //this promotes the build automatically to the target specified in promotionConfig 
-    //Artifactory.addInteractivePromotion server: server, promotionConfig: promotionConfig, displayName: "Promotions Time" //this need human interaction to promote
-    echo "=============== Promotions are done"
-}
-
 */
 echo '==============My Pipeline is finishing ==============='
