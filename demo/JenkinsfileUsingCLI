@@ -12,9 +12,11 @@ pipeline{
 
 
         stage ('dummy'){
+            steps{
 
-            node {
-                sh 'pwd'
+                node {
+                    sh 'pwd'
+                }
             }
         }
 
