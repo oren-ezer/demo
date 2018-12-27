@@ -18,11 +18,18 @@ stage 'maven build'
 node {
     git url: 'https://github.com/oren-ezer/demo.git'
 
+<<<<<<< HEAD
 //    sh 'find -type f -name pomForDockerWithRemoteArti.xml
 //creating the config file
     sh 'echo "version: 1\ntype: maven\nresolver:\n  snapshotRepo: jcenter\n  releaseRepo: jcenter\n  serverID: oren_remote\ndeployer:\n  snapshotRepo: mylocalrepo\n  releaseRepo: mylocalrepo\n  serverID: oren_remote" > ./config.txt'
 //executing the build with the config file
     sh '/jfrog rt mvn "clean install -f /Users/orenezer/MyData/repos/demo/demo/pomForDockerWithRemoteArti.xml -DskipTests" ./config.txt --build-name=myCliBuild --build-number=127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927'
+=======
+    sh 'find -type f -name pomForDockerWithRemoteArti.xml'
+
+    //sh "/jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
+    //sh "/jfrog rt mvn "clean install -f /Users/orenezer/MyData/repos/demo/demo/pomForDockerWithRemoteArti.xml -DskipTests" /Users/orenezer/MyData/tools/myJfrogCliBuilds/mymvn/configFile.txt --build-name=pdfBuild --build-number=27
+>>>>>>> 4500d6e941395ffdcb48fab89596e3b57385859c
 }
 echo '==============maven build finished==============='
 
