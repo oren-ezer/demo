@@ -1,6 +1,10 @@
 echo '==============My Pipeline is starting ==============='
 
-sh 'pwd'
+stage 'dummy'
+node {
+    sh 'pwd'
+}
+
 
 echo '==============creating build context==============='
 stage 'build ctx'
