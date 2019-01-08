@@ -26,18 +26,18 @@ node {
     sh 'cat ./config.txt'
 
     echo '==============setting artifactory config==============='
-    sh '/jfrog rt c --interactive=false --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927'
+    sh '/jfrog rt c --interactive=false --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=admin --password=password'
 
     echo '==============maven build starting==============='
     sh '/jfrog rt mvn "clean install -f ./demo/pomForDockerWithRemoteArti.xml -DskipTests" ./config.txt --build-name=myCliBuild --build-number=127' 
-    //--url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927'
+    //--url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=admin --password=password'
 }
 echo '==============maven build finished==============='
 
 echo '==============publishing build==============='
 stage 'publish build'
 node {
-    sh "/jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
+    sh "/jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=admin --password=password"
 }
 echo '==============build published==============='
 

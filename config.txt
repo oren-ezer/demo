@@ -1,0 +1,10 @@
+version: 1
+type: maven
+resolver:
+  snapshotRepo: jcenter
+  releaseRepo: jcenter
+  serverID: oren_remote
+deployer:
+  snapshotRepo: mylocalrepo
+  releaseRepo: mylocalrepo
+  serverID: oren_remote
