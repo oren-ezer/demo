@@ -44,14 +44,14 @@ echo '==============build published==============='
 echo '==============downloading file==============='
 stage 'downloading'
 node {
-    sh '/jfrog rt dl "mylocalrepo/*demo-0.0.1*.pom" "/myzips/" --build myCliBuild --build-number 127'
+    sh '/jfrog rt dl "mylocalrepo/*demo-0.0.1*.pom" "/myzips/" --build-name myCliBuild --build-number 127'
 }
 echo '==============finished dowloading==============='
 
 echo '==============uploading file==============='
 stage 'uploading'
 node {
-    sh '/jfrog rt u "/myzips/*.pom" myUploadRepo --props source=test from my pipline;p2=v2 --build myCliBuild --build-number 127'
+    sh '/jfrog rt u "/myzips/*.pom" myUploadRepo --props source=test from my pipline;p2=v2 --build-name myCliBuild --build-number 127'
 }
 echo '==============finished uploading==============='
 
