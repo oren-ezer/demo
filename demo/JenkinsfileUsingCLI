@@ -51,25 +51,19 @@ echo '==============finished dowloading==============='
 echo '==============uploading file==============='
 stage 'uploading'
 node {
-    script{
-    java.util.Date d=new java.util.Date();
-    System.ou.println(d)
-    }
+    def date = new Date()
+    println date
     sh '/jfrog rt u "/myzips/*.pom" "myUploadRepo" --props "source=test from my pipline;p2=v2" --build-name myCliBuild --build-number 127'
 }
 echo '==============finished uploading==============='
 
-echo '=================publishing build info====================='
-stage 'publishing'
-node{
-    // Merge the upload and download build-info objects.
-    downloadBuildInfo.append uploadBuildInfo
-    echo '==========================after appending'
-
-    // Publish the build to Artifactory
-    server.publishBuildInfo downloadBuildInfo
+echo '==============publishing build==============='
+stage 'publish build'
+node {
+    sh "/jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
 }
-echo '==================build info published====================='
+echo '==============build published==============='
+
 
 /*
 def downloadBuildInfo, uploadBuildInfo
