@@ -51,12 +51,25 @@ echo '==============finished dowloading==============='
 echo '==============uploading file==============='
 stage 'uploading'
 node {
+    script{
     java.util.Date d=new java.util.Date();
     System.ou.println(d)
+    }
     sh '/jfrog rt u "/myzips/*.pom" "myUploadRepo" --props "source=test from my pipline;p2=v2" --build-name myCliBuild --build-number 127'
 }
 echo '==============finished uploading==============='
 
+echo '=================publishing build info====================='
+stage 'publishing'
+node{
+    // Merge the upload and download build-info objects.
+    downloadBuildInfo.append uploadBuildInfo
+    echo '==========================after appending'
+
+    // Publish the build to Artifactory
+    server.publishBuildInfo downloadBuildInfo
+}
+echo '==================build info published====================='
 
 /*
 def downloadBuildInfo, uploadBuildInfo
