@@ -52,7 +52,7 @@ echo '==============uploading file==============='
 stage 'uploading'
 node {
     def date = new Date()
-    sh '/jfrog rt u "/myzips/*.pom" "myUploadRepo" --props "source=test from my pipline;mydate=${date}" --build-name myCliBuild --build-number 127'
+    sh '/jfrog rt u "/myzips/*.pom" "myUploadRepo" --props "source=test from my pipline;p2=v3" --build-name myCliBuild --build-number 127'
 }
 echo '==============finished uploading==============='
 
@@ -63,6 +63,12 @@ node {
 }
 echo '==============build published==============='
 
+echo '==============promoting build==============='
+stage 'publish build'
+node {
+    sh "/jfrog rt bpr myCliBuild 127 myPromotionRepo --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
+}
+echo '==============build promoted==============='
 
 /*
 def downloadBuildInfo, uploadBuildInfo
