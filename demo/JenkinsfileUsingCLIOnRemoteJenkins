@@ -1,83 +1,85 @@
 echo '==============My Pipeline is starting ==============='
-    stage 'dummy'
-    node {
-   //     docker.image('docker.bintray.io/jfrog/jfrog-cli-go:latest').inside {
 
-        sh 'pwd'
-        echo '==============after PWD==============='
-        sh 'curl -XGET "https://api.bintray.com/content/jfrog/jfrog-cli-go/$latest/jfrog-cli-linux-386/jfrog?bt_package=jfrog-cli-linux-386" -L -k -o jfrog'
-        echo '==============after curl==============='
-        sh "/jfrog rt bce myCliBuild 127"
-        echo '==============after CLI==============='
-     //   }       
-    }
-
-    //docker run docker.bintray.io/jfrog/jfrog-cli-go:latest jfrog -v
+//need to run this only one time on Jenkins so the jfrog client will be downloaded
 /*
+stage 'dummy'
+node {
+    sh 'pwd'
+    echo '==============after PWD==============='
+    sh 'curl -fL https://getcli.jfrog.io | sh'
+    echo '==============after curl==============='
+    sh "ls -la"
+    echo '==============after LS==============='
+    sh "chmod +x ./jfrog"
+    echo '==============after chmod==============='
+    sh "./jfrog rt bce myCliBuild 127"
+    echo '==============after CLI==============='
+}
+*/
 
-    echo '==============creating build context==============='
-    stage 'build ctx'
-    node {
-        sh "/jfrog rt bce myCliBuild 127"
-    }
-    echo '==============build context created==============='
+echo '==============creating build context==============='
+stage 'build ctx'
+node {
+sh "/jfrog rt bce myCliBuild 127"
+}
+echo '==============build context created==============='
+/*
+echo '==============building with maven==============='
+stage 'maven build'
+node {
+env.M2_HOME="/var/jenkins_home/tools/hudson.tasks.Maven_MavenInstallation/dockerMaven/"
+git url: 'https://github.com/oren-ezer/demo.git'
+// a temporary command just to find out where the file is
+//  sh 'find -type f -name pomForDockerWithRemoteArti.xml
+//creating the config file
+sh 'echo "version: 1\ntype: maven\nresolver:\n  snapshotRepo: jcenter\n  releaseRepo: jcenter\n  serverID: oren_remote\ndeployer:\n  snapshotRepo: mylocalrepo\n  releaseRepo: mylocalrepo\n  serverID: oren_remote" > ./config.txt'
+//executing the build with the config file
+sh 'cat ./config.txt'
 
-    echo '==============building with maven==============='
-    stage 'maven build'
-    node {
-        env.M2_HOME="/var/jenkins_home/tools/hudson.tasks.Maven_MavenInstallation/dockerMaven/"
-        git url: 'https://github.com/oren-ezer/demo.git'
-    // a temporary command just to find out where the file is
-    //  sh 'find -type f -name pomForDockerWithRemoteArti.xml
-    //creating the config file
-        sh 'echo "version: 1\ntype: maven\nresolver:\n  snapshotRepo: jcenter\n  releaseRepo: jcenter\n  serverID: oren_remote\ndeployer:\n  snapshotRepo: mylocalrepo\n  releaseRepo: mylocalrepo\n  serverID: oren_remote" > ./config.txt'
-    //executing the build with the config file
-        sh 'cat ./config.txt'
+echo '==============setting artifactory config==============='
+sh '/jfrog rt c --interactive=false --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927'
 
-        echo '==============setting artifactory config==============='
-        sh '/jfrog rt c --interactive=false --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927'
+echo '==============maven build starting==============='
+sh '/jfrog rt mvn "clean install -f ./demo/pomForDockerWithRemoteArti.xml -DskipTests" ./config.txt --build-name=myCliBuild --build-number=127' 
+//--url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927'
+}
+echo '==============maven build finished==============='
 
-        echo '==============maven build starting==============='
-        sh '/jfrog rt mvn "clean install -f ./demo/pomForDockerWithRemoteArti.xml -DskipTests" ./config.txt --build-name=myCliBuild --build-number=127' 
-        //--url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927'
-    }
-    echo '==============maven build finished==============='
+echo '==============publishing build==============='
+stage 'publish build'
+node {
+sh "/jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
+}
+echo '==============build published==============='
 
-    echo '==============publishing build==============='
-    stage 'publish build'
-    node {
-        sh "/jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
-    }
-    echo '==============build published==============='
+echo '==============downloading file==============='
+stage 'downloading'
+node {
+sh '/jfrog rt dl "mylocalrepo/*demo-0.0.1*.pom" "/myzips/" --build-name myCliBuild --build-number 127'
+}
+echo '==============finished dowloading==============='
 
-    echo '==============downloading file==============='
-    stage 'downloading'
-    node {
-        sh '/jfrog rt dl "mylocalrepo/*demo-0.0.1*.pom" "/myzips/" --build-name myCliBuild --build-number 127'
-    }
-    echo '==============finished dowloading==============='
+echo '==============uploading file==============='
+stage 'uploading'
+node {
+def date = new Date()
+sh '/jfrog rt u "/myzips/*.pom" "myUploadRepo" --props "source=test from my pipline;p2=v3" --build-name myCliBuild --build-number 127'
+}
+echo '==============finished uploading==============='
 
-    echo '==============uploading file==============='
-    stage 'uploading'
-    node {
-        def date = new Date()
-        sh '/jfrog rt u "/myzips/*.pom" "myUploadRepo" --props "source=test from my pipline;p2=v3" --build-name myCliBuild --build-number 127'
-    }
-    echo '==============finished uploading==============='
+echo '==============publishing build==============='
+stage 'publish build'
+node {
+sh "/jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
+}
+echo '==============build published==============='
 
-    echo '==============publishing build==============='
-    stage 'publish build'
-    node {
-        sh "/jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
-    }
-    echo '==============build published==============='
+echo '==============promoting build==============='
+stage 'publish build'
+node {
+sh "/jfrog rt bpr myCliBuild 127 myPromotionRepo --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
+}
+echo '==============build promoted==============='
+echo '==============My Pipeline is finishing ==============='
 
-    echo '==============promoting build==============='
-    stage 'publish build'
-    node {
-        sh "/jfrog rt bpr myCliBuild 127 myPromotionRepo --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
-    }
-    echo '==============build promoted==============='
-    echo '==============My Pipeline is finishing ==============='
-
-    */
+*/
