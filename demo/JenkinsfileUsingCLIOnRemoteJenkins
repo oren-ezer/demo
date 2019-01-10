@@ -70,19 +70,20 @@ echo '==============build published==============='
 echo '==============downloading file==============='
 stage 'downloading'
 node {
-sh './jfrog rt dl "mylocalrepo/*demo-0.0.1*.pom" "/myzips/" --build-name myCliBuild --build-number 139'
+    sh './jfrog rt dl "mylocalrepo/*demo-0.0.1*.pom" "/myzips/" --build-name myCliBuild --build-number 139'
 }
 echo '==============finished dowloading==============='
 
-/*
+
 echo '==============uploading file==============='
 stage 'uploading'
 node {
 def date = new Date()
-sh './jfrog rt u "/myzips/*.pom" "myUploadRepo" --props "source=test from my pipline;p2=v3" --build-name myCliBuild --build-number 139'
+    sh './jfrog rt u "/myzips/*.pom" "myUploadRepo" --props "source=test from my pipline;p2=v3" --build-name myCliBuild --build-number 139'
 }
 echo '==============finished uploading==============='
 
+/*
 echo '==============publishing build==============='
 stage 'publish build'
 node {
