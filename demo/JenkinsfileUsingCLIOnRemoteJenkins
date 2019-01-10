@@ -78,8 +78,9 @@ echo '==============finished dowloading==============='
 echo '==============uploading file==============='
 stage 'uploading'
 node {
-def date = new Date()
-    sh './jfrog rt u "/myzips/*.pom" "myUploadRepo" --props "source=test from my pipline;p2=v3" --build-name myCliBuild --build-number 139'
+    def date = new Date()
+    def props="source=test from my pipline;mydate="+date
+    sh './jfrog rt u "/myzips/*.pom" "myUploadRepo" --props "'+props.toUpperCase()+'" --build-name myCliBuild --build-number 139'
 }
 echo '==============finished uploading==============='
 
