@@ -22,7 +22,11 @@ echo '==============build context created==============='
 echo '==============building with maven==============='
 stage 'maven build'
 node {
-env.M2_HOME="/var/jenkins_home/tools/hudson.tasks.Maven_MavenInstallation/dockerMaven/"
+
+    env.M2_HOME= tool "dockerMaven"
+    echo "=====================home================"
+    echo env.M2_HOME
+    echo "=====================home================"
 git url: 'https://github.com/oren-ezer/demo.git'
 // a temporary command just to find out where the file is
 //  sh 'find -type f -name pomForDockerWithRemoteArti.xml
