@@ -20,10 +20,10 @@ node {
 echo '==============creating build context==============='
 stage 'build ctx'
 node {
-sh "/jfrog rt bce myCliBuild 127"
+sh "./jfrog rt bce myCliBuild 127"
 }
 echo '==============build context created==============='
-/*
+
 echo '==============building with maven==============='
 stage 'maven build'
 node {
@@ -44,11 +44,11 @@ sh '/jfrog rt mvn "clean install -f ./demo/pomForDockerWithRemoteArti.xml -Dskip
 //--url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927'
 }
 echo '==============maven build finished==============='
-
+/*
 echo '==============publishing build==============='
 stage 'publish build'
 node {
-sh "/jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
+sh "./jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
 }
 echo '==============build published==============='
 
@@ -70,14 +70,14 @@ echo '==============finished uploading==============='
 echo '==============publishing build==============='
 stage 'publish build'
 node {
-sh "/jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
+sh "./jfrog rt bp myCliBuild 127 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
 }
 echo '==============build published==============='
 
 echo '==============promoting build==============='
 stage 'publish build'
 node {
-sh "/jfrog rt bpr myCliBuild 127 myPromotionRepo --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
+sh "./jfrog rt bpr myCliBuild 127 myPromotionRepo --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
 }
 echo '==============build promoted==============='
 echo '==============My Pipeline is finishing ==============='
