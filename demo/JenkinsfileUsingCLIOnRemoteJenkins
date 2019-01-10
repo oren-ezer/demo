@@ -3,6 +3,7 @@ docker.image('docker.bintray.io/jfrog/jfrog-cli-go:latest').inside {
     stage 'dummy'
     node {
         sh 'pwd'
+        echo '==============after PWD===============''
     }
 
     //docker run docker.bintray.io/jfrog/jfrog-cli-go:latest jfrog -v
