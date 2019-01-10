@@ -83,20 +83,18 @@ def date = new Date()
 }
 echo '==============finished uploading==============='
 
-/*
+
 echo '==============publishing build==============='
 stage 'publish build'
 node {
-sh "./jfrog rt bp myCliBuild 139 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
+    sh "./jfrog rt bp myCliBuild 139 --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
 }
 echo '==============build published==============='
 
 echo '==============promoting build==============='
 stage 'publish build'
 node {
-sh "./jfrog rt bpr myCliBuild 139 myPromotionRepo --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
+    sh "./jfrog rt bpr myCliBuild 139 myPromotionRepo --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
 }
 echo '==============build promoted==============='
 echo '==============My Pipeline is finishing ==============='
-
-*/
