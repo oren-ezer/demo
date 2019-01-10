@@ -50,7 +50,7 @@ echo '==============uploading file==============='
 stage 'uploading'
 node {
     def date = new Date()
-    sh '/jfrog rt u "/myzips/*.pom" "myUploadRepo" --props "source=test from my pipline;mydate=${date}" --build-name myCliBuild --build-number 127'
+    sh '/jfrog rt u "/myzips/*.pom" "myUploadRepo" --props "source=test from my pipline;p2=v4" --build-name myCliBuild --build-number 127'
 }
 echo '==============finished uploading==============='
 
