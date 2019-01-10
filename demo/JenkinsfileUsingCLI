@@ -5,11 +5,16 @@ node {
     sh 'pwd'
 }
 
-
+//docker run docker.bintray.io/jfrog/jfrog-cli-go:latest jfrog -v
 echo '==============creating build context==============='
 stage 'build ctx'
 node {
-    sh "/jfrog rt bce myCliBuild 127"
+    /* Requires the Docker Pipeline plugin to be installed */
+    docker.image('docker.bintray.io/jfrog/jfrog-cli-go:latest').inside {
+        stage('Test') {
+        sh "/jfrog rt bce myCliBuild 127"
+        }
+    }
 }
 echo '==============build context created==============='
 
