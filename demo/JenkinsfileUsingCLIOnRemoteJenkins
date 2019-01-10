@@ -1,11 +1,15 @@
 echo '==============My Pipeline is starting ==============='
     stage 'dummy'
     node {
-        docker.image('docker.bintray.io/jfrog/jfrog-cli-go:latest').inside {
+   //     docker.image('docker.bintray.io/jfrog/jfrog-cli-go:latest').inside {
 
         sh 'pwd'
         echo '==============after PWD==============='
-        }
+        sh 'curl -XGET "https://api.bintray.com/content/jfrog/jfrog-cli-go/$latest/jfrog-cli-linux-386/jfrog?bt_package=jfrog-cli-linux-386" -L -k -o jfrog'
+        echo '==============after curl==============='
+        sh "/jfrog rt bce myCliBuild 127"
+        echo '==============after CLI==============='
+     //   }       
     }
 
     //docker run docker.bintray.io/jfrog/jfrog-cli-go:latest jfrog -v
