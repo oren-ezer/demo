@@ -61,7 +61,12 @@ node {
 }
 echo '==============build published==============='
 
-
+echo '==============promoting build==============='
+stage 'publish build'
+node {
+    sh "/jfrog rt bpr myCliBuild 127 myPromotionRepo --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927"
+}
+echo '==============build promoted==============='
 /*
 def downloadBuildInfo, uploadBuildInfo
 def server = Artifactory.server('arti')
