@@ -1,21 +1,16 @@
 echo '==============My Pipeline is starting ==============='
 
 //need to run this only one time on Jenkins so the jfrog client will be downloaded
-/*
-stage 'dummy'
+
+stage 'downloading jfrog cli '
 node {
     sh 'pwd'
-    echo '==============after PWD==============='
     sh 'curl -fL https://getcli.jfrog.io | sh'
-    echo '==============after curl==============='
     sh "ls -la"
-    echo '==============after LS==============='
     sh "chmod +x ./jfrog"
-    echo '==============after chmod==============='
     sh "./jfrog rt bce myCliBuild 127"
-    echo '==============after CLI==============='
 }
-*/
+echo '==============after downloading jfrog CLI==============='
 
 echo '==============creating build context==============='
 stage 'build ctx'
