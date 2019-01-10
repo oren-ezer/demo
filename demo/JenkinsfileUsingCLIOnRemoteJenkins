@@ -37,10 +37,10 @@ sh 'echo "version: 1\ntype: maven\nresolver:\n  snapshotRepo: jcenter\n  release
 sh 'cat ./config.txt'
 
 echo '==============setting artifactory config==============='
-sh '/jfrog rt c --interactive=false --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927'
+sh './jfrog rt c --interactive=false --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927'
 
 echo '==============maven build starting==============='
-sh '/jfrog rt mvn "clean install -f ./demo/pomForDockerWithRemoteArti.xml -DskipTests" ./config.txt --build-name=myCliBuild --build-number=127' 
+sh './jfrog rt mvn "clean install -f ./demo/pomForDockerWithRemoteArti.xml -DskipTests" ./config.txt --build-name=myCliBuild --build-number=127' 
 //--url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927'
 }
 echo '==============maven build finished==============='
@@ -55,7 +55,7 @@ echo '==============build published==============='
 echo '==============downloading file==============='
 stage 'downloading'
 node {
-sh '/jfrog rt dl "mylocalrepo/*demo-0.0.1*.pom" "/myzips/" --build-name myCliBuild --build-number 127'
+sh './jfrog rt dl "mylocalrepo/*demo-0.0.1*.pom" "/myzips/" --build-name myCliBuild --build-number 127'
 }
 echo '==============finished dowloading==============='
 
@@ -63,7 +63,7 @@ echo '==============uploading file==============='
 stage 'uploading'
 node {
 def date = new Date()
-sh '/jfrog rt u "/myzips/*.pom" "myUploadRepo" --props "source=test from my pipline;p2=v3" --build-name myCliBuild --build-number 127'
+sh './jfrog rt u "/myzips/*.pom" "myUploadRepo" --props "source=test from my pipline;p2=v3" --build-name myCliBuild --build-number 127'
 }
 echo '==============finished uploading==============='
 
