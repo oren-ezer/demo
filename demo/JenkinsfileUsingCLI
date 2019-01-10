@@ -28,7 +28,7 @@ docker.image('docker.bintray.io/jfrog/jfrog-cli-go:latest').inside {
         sh 'cat ./config.txt'
 
         echo '==============setting artifactory config==============='
-        sh '/jfrog rt c --interactive=false --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927'
+        sh '/jfrog rt c --interactive=false --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=oren --password=oren3927 oren_remote'
 
         echo '==============maven build starting==============='
         sh '/jfrog rt mvn "clean install -f ./demo/pomForDockerWithRemoteArti.xml -DskipTests" ./config.txt --build-name=myCliBuild --build-number=127' 
