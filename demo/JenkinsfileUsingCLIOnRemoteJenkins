@@ -1,9 +1,11 @@
 echo '==============My Pipeline is starting ==============='
-docker.image('docker.bintray.io/jfrog/jfrog-cli-go:latest').inside {
     stage 'dummy'
     node {
+        docker.image('docker.bintray.io/jfrog/jfrog-cli-go:latest').inside {
+
         sh 'pwd'
         echo '==============after PWD==============='
+        }
     }
 
     //docker run docker.bintray.io/jfrog/jfrog-cli-go:latest jfrog -v
@@ -75,4 +77,3 @@ docker.image('docker.bintray.io/jfrog/jfrog-cli-go:latest').inside {
     echo '==============My Pipeline is finishing ==============='
 
     */
-}
