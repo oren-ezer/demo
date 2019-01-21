@@ -24,20 +24,20 @@ timestamps {
         def distributionUrl = params.distributionUrl
         def releaseBundleName = 'my-java-project-bundle'
         def pipelineUtils
-        def artifactoryCredentialId = 'artifactory-login'
-/*
+        def artifactoryCredentialId = 'oren_remotes'
+
         stage("checkout") {
             checkout scm
             buildNumber = env.BUILD_NUMBER
             def jobName = env.JOB_NAME
             mavenBuildName = "maven-${jobName}"
             dockerBuildName = "docker-${jobName}"
-            server = Artifactory.server "local-artifactory"
+            server = Artifactory.server "arti"
             rtFullUrl = server.url
             rtIpAddress = rtFullUrl - ~/^http?.:\/\// - ~/\/artifactory$/
             pipelineUtils = load 'pipelineUtils.groovy'
         }
-
+/*
         stage("Build+Deploy") {
             def rtMaven = Artifactory.newMavenBuild()
             rtMaven.deployer server: server, releaseRepo: 'libs-snapshot-local', snapshotRepo: 'libs-snapshot-local'
