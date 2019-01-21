@@ -42,7 +42,7 @@ timestamps {
             echo '=========================after'
             rtFullUrl = server.url
             rtIpAddress = rtFullUrl - ~/^http?.:\/\// - ~/\/artifactory$/
-            pipelineUtils = load 'pipelineUtils.groovy'
+            pipelineUtils = load 'demo/pipelineUtils.groovy'
         }
 /*
         stage("Build+Deploy") {
