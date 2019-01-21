@@ -25,7 +25,7 @@ timestamps {
         def distributionUrl = params.distributionUrl
         def releaseBundleName = 'my-java-project-bundle'
         def pipelineUtils
-        def artifactoryCredentialId = 'oren_remotes'
+        def artifactoryCredentialId = 'oren_remote'
 
         stage("checkout") {
             checkout scm
@@ -33,7 +33,9 @@ timestamps {
             def jobName = env.JOB_NAME
             mavenBuildName = "maven-${jobName}"
             dockerBuildName = "docker-${jobName}"
+            echo '=========================before'
             server = Artifactory.server "oren_remote"
+            echo '=========================after'
             rtFullUrl = server.url
             rtIpAddress = rtFullUrl - ~/^http?.:\/\// - ~/\/artifactory$/
             pipelineUtils = load 'pipelineUtils.groovy'
