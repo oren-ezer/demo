@@ -28,6 +28,10 @@ timestamps {
         def artifactoryCredentialId = 'oren_remote'
 
         stage("checkout") {
+
+            sh 'pwd'
+            sh "ls -la"
+
             checkout scm
             buildNumber = env.BUILD_NUMBER
             def jobName = env.JOB_NAME
