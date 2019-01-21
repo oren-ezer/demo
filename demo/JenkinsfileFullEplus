@@ -91,7 +91,7 @@ timestamps {
             server.promote promotionConfig
 
         }
-
+/*
         stage("Build docker image") {
             def dockerBuildInfo = Artifactory.newBuildInfo()
             dockerBuildInfo.name = dockerBuildName
