@@ -21,6 +21,7 @@ timestamps {
         def buildNumber
         def mavenBuildName
         def dockerBuildName
+        def buildInfo
         def mavenPromotionRepo = 'my-maven-repo'
         def distributionUrl = params.distributionUrl
         def releaseBundleName = 'my-java-project-bundle'
@@ -54,7 +55,7 @@ timestamps {
             rtMaven.deployer server: server, releaseRepo: 'libs-snapshot-local', snapshotRepo: 'libs-snapshot-local'
             rtMaven.tool = 'dockerMaven'
             String mvnGoals = "-B clean install -DartifactVersion=${buildNumber} -s demo/settings.xml"
-            def buildInfo = Artifactory.newBuildInfo()
+            buildInfo = Artifactory.newBuildInfo()
             buildInfo.name = mavenBuildName
             buildInfo.env.collect()
             echo 'before ==============='
@@ -62,13 +63,19 @@ timestamps {
             echo 'middle ==============='       
             server.publishBuildInfo buildInfo
             echo 'after ================'
-/*
+        }
+
+        stage("Scan") {
+
             def scanConfig = [
                     'buildName'  : buildInfo.name,
                     'buildNumber': buildInfo.number,
                     'failBuild'  : true
             ]
             server.xrayScan scanConfig
+        }
+/*
+        stage("Promote") {
 
             def promotionConfig = [
                     'buildName'  : buildInfo.name,
