@@ -34,8 +34,8 @@ timestamps {
             sh 'pwd'
             echo 'ls:'
             sh "ls -la"
-            echo 'build number:'+buildNumber
-            // echo 'job name:'+jobName
+            echo 'build number:'+${buildNumber}
+            // echo 'job name:'+${jobName}
             // echo '==================='
 
             checkout scm
