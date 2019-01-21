@@ -93,7 +93,7 @@
     <repository>
       <id>local-repo</id>
       <name>oren_remote</name>
-      <url>http://35.240.119.121/artifactory/libs-snapshot-local</url>
+      <url>http://artifactory-orendemo.jfrogdev.co/artifactory/libs-snapshot-local</url>
     </repository>
   </distributionManagement>
 </project>
