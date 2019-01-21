@@ -4,7 +4,7 @@ properties(
     [
         parameters(
             [
-                string(name: 'distributionUrl',defaultValue: 'http://35.195.75.184', description: 'Distribution server URL')
+                string(name: 'distributionUrl',defaultValue: 'http://35.240.119.121', description: 'Distribution server URL')
             ]
         )
     ]
@@ -20,12 +20,12 @@ timestamps {
         def buildNumber
         def mavenBuildName
         def dockerBuildName
-        def mavenPromotionRepo = 'stable-maven-repo'
+        def mavenPromotionRepo = 'my-maven-repo'
         def distributionUrl = params.distributionUrl
-        def releaseBundleName = 'java-project-bundle'
+        def releaseBundleName = 'my-java-project-bundle'
         def pipelineUtils
         def artifactoryCredentialId = 'artifactory-login'
-
+/*
         stage("checkout") {
             checkout scm
             buildNumber = env.BUILD_NUMBER
@@ -189,5 +189,6 @@ timestamps {
 
             }
         }
+*/        
     }
 }
