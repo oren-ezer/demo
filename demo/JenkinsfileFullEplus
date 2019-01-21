@@ -54,7 +54,7 @@ timestamps {
             echo '==================='
             echo buildNumber
             echo '==================='
-            rtMaven.run pom: 'pomForEplus.xml', goals: mvnGoals, buildInfo: buildInfo
+            rtMaven.run pom: 'demo/pomForEplus.xml', goals: mvnGoals, buildInfo: buildInfo
             server.publishBuildInfo buildInfo
 /*
             def scanConfig = [
