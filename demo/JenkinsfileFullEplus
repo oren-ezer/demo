@@ -12,7 +12,7 @@ properties(
 
 timestamps {
 
-    node('generic') {
+//    node('generic') {
 
         def server
         def rtFullUrl
@@ -190,5 +190,5 @@ timestamps {
             }
         }
 */        
-    }
+//    }
 }
