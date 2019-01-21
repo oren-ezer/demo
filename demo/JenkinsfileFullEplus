@@ -37,14 +37,12 @@ timestamps {
             def jobName = env.JOB_NAME
             mavenBuildName = "maven-${jobName}"
             dockerBuildName = "docker-${jobName}"
-            echo '=========================before'
             server = Artifactory.server "oren_remote"
-            echo '=========================after'
             rtFullUrl = server.url
             rtIpAddress = rtFullUrl - ~/^http?.:\/\// - ~/\/artifactory$/
             pipelineUtils = load 'demo/pipelineUtils.groovy'
         }
-/*
+
         stage("Build+Deploy") {
             def rtMaven = Artifactory.newMavenBuild()
             rtMaven.deployer server: server, releaseRepo: 'libs-snapshot-local', snapshotRepo: 'libs-snapshot-local'
@@ -53,8 +51,9 @@ timestamps {
             def buildInfo = Artifactory.newBuildInfo()
             buildInfo.name = mavenBuildName
             buildInfo.env.collect()
-            rtMaven.run pom: 'pom.xml', goals: mvnGoals, buildInfo: buildInfo
+            rtMaven.run pom: 'pomForEplus.xml', goals: mvnGoals, buildInfo: buildInfo
             server.publishBuildInfo buildInfo
+/*
             def scanConfig = [
                     'buildName'  : buildInfo.name,
                     'buildNumber': buildInfo.number,
@@ -74,9 +73,9 @@ timestamps {
             ]
 
             server.promote promotionConfig
-
+*/
         }
-
+/*
         stage("Build docker image") {
             def dockerBuildInfo = Artifactory.newBuildInfo()
             dockerBuildInfo.name = dockerBuildName
