@@ -29,8 +29,14 @@ timestamps {
 
         stage("checkout") {
 
+            echo '==================='
+            echo 'pwd:'
             sh 'pwd'
+            echo 'ls:'
             sh "ls -la"
+            echo 'build number:'+buildNumber
+            echo 'job name:'+jobName
+            echo '==================='
 
             checkout scm
             buildNumber = env.BUILD_NUMBER
@@ -51,11 +57,11 @@ timestamps {
             def buildInfo = Artifactory.newBuildInfo()
             buildInfo.name = mavenBuildName
             buildInfo.env.collect()
-            echo '==================='
-            echo buildNumber
-            echo '==================='
+            echo 'before ==============='
             rtMaven.run pom: 'demo/pomForEplus.xml', goals: mvnGoals, buildInfo: buildInfo
+            echo 'middle ==============='
             server.publishBuildInfo buildInfo
+            echo 'after ================'
 /*
             def scanConfig = [
                     'buildName'  : buildInfo.name,
