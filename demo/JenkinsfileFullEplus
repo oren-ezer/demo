@@ -33,7 +33,7 @@ timestamps {
             def jobName = env.JOB_NAME
             mavenBuildName = "maven-${jobName}"
             dockerBuildName = "docker-${jobName}"
-            server = Artifactory.server "arti"
+            server = Artifactory.server "oren_remote"
             rtFullUrl = server.url
             rtIpAddress = rtFullUrl - ~/^http?.:\/\// - ~/\/artifactory$/
             pipelineUtils = load 'pipelineUtils.groovy'
