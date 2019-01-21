@@ -46,7 +46,7 @@ timestamps {
         stage("Build+Deploy") {
             def rtMaven = Artifactory.newMavenBuild()
             rtMaven.deployer server: server, releaseRepo: 'libs-snapshot-local', snapshotRepo: 'libs-snapshot-local'
-            rtMaven.tool = 'maven-3.5.3'
+            rtMaven.tool = 'dockerMaven'
             String mvnGoals = "-B clean install -DartifactVersion=${buildNumber} -s settings.xml"
             def buildInfo = Artifactory.newBuildInfo()
             buildInfo.name = mavenBuildName
