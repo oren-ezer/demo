@@ -28,19 +28,19 @@ timestamps {
         def artifactoryCredentialId = 'oren_remote'
 
         stage("checkout") {
+            checkout scm
+            buildNumber = env.BUILD_NUMBER
+            def jobName = env.JOB_NAME
 
             echo '==================='
             echo 'pwd:'
             sh 'pwd'
             echo 'ls:'
             sh "ls -la"
-            echo "build number: ${buildNumber}"
-            // echo 'job name:'+${jobName}
-            // echo '==================='
+            echo "build number: ${env.JOB_NAME}"
+            echo "job name:'+${jobName}"
+            echo "==================="
 
-            checkout scm
-            buildNumber = env.BUILD_NUMBER
-            def jobName = env.JOB_NAME
             mavenBuildName = "maven-${jobName}"
             dockerBuildName = "docker-${jobName}"
             server = Artifactory.server "oren_remote"
