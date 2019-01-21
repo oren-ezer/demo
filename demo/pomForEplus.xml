@@ -89,6 +89,25 @@
   </dependencies>
 <!-->  
 
+	<repositories>
+		<repository>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+			<id>jcenter</id>
+			<name>jcenter</name>
+            <url>https://artifactory-orendemo.jfrogdev.co/artifactory/jcenter</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+
   <distributionManagement>
     <repository>
       <id>local-repo</id>
