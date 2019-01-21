@@ -51,6 +51,9 @@ timestamps {
             def buildInfo = Artifactory.newBuildInfo()
             buildInfo.name = mavenBuildName
             buildInfo.env.collect()
+            echo '==================='
+            echo buildNumber
+            echo '==================='
             rtMaven.run pom: 'pomForEplus.xml', goals: mvnGoals, buildInfo: buildInfo
             server.publishBuildInfo buildInfo
 /*
