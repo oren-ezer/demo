@@ -105,6 +105,13 @@ timestamps {
             server.download spec: downloadSpec, buildInfo: dockerBuildInfo
             def rtDocker = Artifactory.docker server: server
 
+            echo '==================='
+            echo 'pwd:'
+            sh 'pwd'
+            echo 'ls:'
+            sh "ls -la /myzips/downloads"
+            echo "==================="
+
 /*            
             def dockerImageTag = "${rtIpAddress}/docker-java:${buildNumber}"
             docker.build(dockerImageTag, "--build-arg DOCKER_REGISTRY_URL=${rtIpAddress} .")
@@ -130,7 +137,7 @@ timestamps {
             ]
 
             server.promote dockerPromotionConfig
-*/
+*/  
         }
 /*
         stage("Create release bundle") {
