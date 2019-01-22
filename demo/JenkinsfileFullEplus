@@ -58,11 +58,8 @@ timestamps {
             buildInfo = Artifactory.newBuildInfo()
             buildInfo.name = mavenBuildName
             buildInfo.env.collect()
-            echo 'before ==============='
             rtMaven.run pom: 'demo/pomForEplus.xml', goals: mvnGoals, buildInfo: buildInfo
-            echo 'middle ==============='       
             server.publishBuildInfo buildInfo
-            echo 'after ================'
         }
 
         stage("Scan") {
@@ -91,15 +88,15 @@ timestamps {
             server.promote promotionConfig
 
         }
-/*
+
         stage("Build docker image") {
             def dockerBuildInfo = Artifactory.newBuildInfo()
             dockerBuildInfo.name = dockerBuildName
             def downloadSpec = """{
              "files": [
               {
-                  "pattern": "libs-snapshot-local/com/mkyong/hashing/java-project/${buildNumber}-SNAPSHOT/java-project-*.jar",
-                  "target": "target/downloads/",
+                  "pattern": "libs-snapshot-local/com/myjfrog/demo/${buildNumber}-SNAPSHOT/demo-*.jar",
+                  "target": "/myzips/downloads/",
                   "flat": "true"
                 }
              ]
@@ -107,6 +104,8 @@ timestamps {
 
             server.download spec: downloadSpec, buildInfo: dockerBuildInfo
             def rtDocker = Artifactory.docker server: server
+
+/*            
             def dockerImageTag = "${rtIpAddress}/docker-java:${buildNumber}"
             docker.build(dockerImageTag, "--build-arg DOCKER_REGISTRY_URL=${rtIpAddress} .")
             dockerBuildInfo.env.collect()
@@ -131,8 +130,9 @@ timestamps {
             ]
 
             server.promote dockerPromotionConfig
+*/
         }
-
+/*
         stage("Create release bundle") {
 
             rtServiceId = pipelineUtils.restGet("${rtFullUrl}/api/system/service_id", artifactoryCredentialId)
