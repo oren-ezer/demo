@@ -105,17 +105,17 @@ timestamps {
             server.download spec: downloadSpec, buildInfo: dockerBuildInfo
             def rtDocker = Artifactory.docker server: server
 
-/*
+
             echo '==================='
             echo 'pwd:'
             sh 'pwd'
             echo 'ls:'
             sh "ls -la /myzips/downloads"
             echo "==================="
-*/
+
             
             def dockerImageTag = "${rtIpAddress}/docker-java:${buildNumber}"
-            docker.build(dockerImageTag, "--build-arg DOCKER_REGISTRY_URL=${rtIpAddress} .")
+            docker.build(dockerImageTag, "--f demo/Dockerfile --build-arg DOCKER_REGISTRY_URL=${rtIpAddress} .")
             dockerBuildInfo.env.collect()
             rtDocker.push(dockerImageTag, 'docker-local', dockerBuildInfo)
             server.publishBuildInfo dockerBuildInfo
