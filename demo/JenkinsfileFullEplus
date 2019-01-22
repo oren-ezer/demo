@@ -115,7 +115,7 @@ timestamps {
 
             
             def dockerImageTag = "${rtIpAddress}/docker-java:${buildNumber}"
-            docker.build(dockerImageTag, "--f demo/Dockerfile --build-arg DOCKER_REGISTRY_URL=${rtIpAddress} .")
+            docker.build(dockerImageTag, "-f demo/Dockerfile --build-arg DOCKER_REGISTRY_URL=${rtIpAddress} .")
             dockerBuildInfo.env.collect()
             rtDocker.push(dockerImageTag, 'docker-local', dockerBuildInfo)
             server.publishBuildInfo dockerBuildInfo
