@@ -145,7 +145,7 @@ timestamps {
             ]
 
             server.promote dockerPromotionConfig
-*/  
+ 
         }
 /*
         stage("Create release bundle") {
