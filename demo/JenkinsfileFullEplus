@@ -114,10 +114,10 @@ timestamps {
             echo "===================${rtIpAddress}"
 
             
-            def dockerImageTag = "${rtIpAddress}/docker-local:${buildNumber}"
+            def dockerImageTag = "${rtIpAddress}/docker:${buildNumber}"
             docker.build(dockerImageTag, "-f demo/Dockerfile --build-arg DOCKER_REGISTRY_URL=${rtIpAddress} .")
             dockerBuildInfo.env.collect()
-            rtDocker.push(dockerImageTag, 'docker-local', dockerBuildInfo)
+            rtDocker.push(dockerImageTag, 'docker', dockerBuildInfo)
             server.publishBuildInfo dockerBuildInfo
         }
 
