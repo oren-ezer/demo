@@ -26,7 +26,7 @@ timestamps {
         def distributionUrl = params.distributionUrl
         def releaseBundleName = 'my-project-bundle'
         def pipelineUtils
-        def artifactoryCredentialId = 'oren_remote'
+        def artifactoryCredentialId = 'artifactory-login'
 
         stage("checkout") {
             checkout scm
