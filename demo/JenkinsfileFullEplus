@@ -22,9 +22,9 @@ timestamps {
         def mavenBuildName
         def dockerBuildName
         def buildInfo
-        def mavenPromotionRepo = 'my-maven-repo'
+        def mavenPromotionRepo = 'my-stable-maven-repo'
         def distributionUrl = params.distributionUrl
-        def releaseBundleName = 'my-java-project-bundle'
+        def releaseBundleName = 'my-project-bundle'
         def pipelineUtils
         def artifactoryCredentialId = 'oren_remote'
 
@@ -88,7 +88,7 @@ timestamps {
             server.promote promotionConfig
 
         }
-
+/*
         stage("Build docker image") {
             def dockerBuildInfo = Artifactory.newBuildInfo()
             dockerBuildInfo.name = dockerBuildName
@@ -120,7 +120,8 @@ timestamps {
             rtDocker.push(dockerImageTag, 'docker', dockerBuildInfo)
             server.publishBuildInfo dockerBuildInfo
         }
-
+*/
+/*
         stage("Scan docker image") {
             
             def dockerScanConfig = [
@@ -130,7 +131,8 @@ timestamps {
             ]
             server.xrayScan dockerScanConfig
         }
-
+*/        
+/*
         stage("Promote docker image") {
 
             def dockerPromotionConfig = [
@@ -147,7 +149,8 @@ timestamps {
             server.promote dockerPromotionConfig
  
         }
-/*
+*/        
+//*
         stage("Create release bundle") {
 
             rtServiceId = pipelineUtils.restGet("${rtFullUrl}/api/system/service_id", artifactoryCredentialId)
@@ -158,7 +161,7 @@ timestamps {
                 \"\$and\": [
                         {
                             \"repo\": {
-                            \"\$match\": \"stable-*-repo\"
+                            \"\$match\": \"my-stable-*-repo\"
                         }
                         },
                         {
@@ -200,7 +203,8 @@ timestamps {
 
             res = pipelineUtils.restPost("${distributionUrl}/api/v1/release_bundle", artifactoryCredentialId, releaseBundleBodyJson)
         }
-
+//*/
+/*
         stage('Distribute release bundle') {
             def distributeReleaseBundleBody = readJSON file: 'distribute-release-bundle-body.json'
             res = pipelineUtils.restPost("${distributionUrl}/api/v1/distribution/${releaseBundleName}/${buildNumber}", artifactoryCredentialId, distributeReleaseBundleBody.toString())
