@@ -101,7 +101,7 @@ timestamps {
                     'buildName'  : buildInfo.name,
                     'buildNumber': buildInfo.number,
                     'targetRepo' : prodPromotionRepo,
-                    'comment'    : 'This is a strelease ready java-project version',
+                    'comment'    : 'This is a release ready java-project version',
                     'status'     : 'Scanned',
                     'sourceRepo' : 'myteam-maven-stage-local',
                     'copy'       : true,
@@ -175,8 +175,9 @@ timestamps {
 */        
 //*
         stage("Create release bundle") {
-
+echo "===========before rest call============="
             rtServiceId = pipelineUtils.restGet("${rtFullUrl}/api/system/service_id", artifactoryCredentialId)
+echo "===========after rest call============="
 
 
             def aqlQuery = """
