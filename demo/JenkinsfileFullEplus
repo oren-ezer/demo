@@ -22,7 +22,8 @@ timestamps {
         def mavenBuildName
         def dockerBuildName
         def buildInfo
-        def mavenPromotionRepo = 'my-stable-maven-repo'
+        def stagingPromotionRepo = 'myteam-maven-stage-local'
+        def prodPromotionRepo = 'myteam-maven-prod-local'
         def distributionUrl = params.distributionUrl
         def releaseBundleName = 'my-project-bundle'
         def pipelineUtils
@@ -52,7 +53,7 @@ timestamps {
 
         stage("Build+Deploy") {
             def rtMaven = Artifactory.newMavenBuild()
-            rtMaven.deployer server: server, releaseRepo: 'libs-snapshot-local', snapshotRepo: 'libs-snapshot-local'
+            rtMaven.deployer server: server, releaseRepo: 'myteam-maven-dev-local', snapshotRepo: 'myteam-maven-dev-local'
             rtMaven.tool = 'mavenTool'
             String mvnGoals = "-B clean install -DartifactVersion=${buildNumber} -s demo/settings.xml"
             buildInfo = Artifactory.newBuildInfo()
@@ -80,10 +81,10 @@ timestamps {
             def promotionConfig = [
                     'buildName'  : buildInfo.name,
                     'buildNumber': buildInfo.number,
-                    'targetRepo' : mavenPromotionRepo,
+                    'targetRepo' : stagingPromotionRepo,
                     'comment'    : 'This is a stable java-project version',
                     'status'     : 'Released',
-                    'sourceRepo' : 'libs-snapshot-local',
+                    'sourceRepo' : 'myteam-maven-dev-local',
                     'copy'       : true,
                     'failFast'   : true
             ]
@@ -98,7 +99,7 @@ timestamps {
             def downloadSpec = """{
              "files": [
               {
-                  "pattern": "libs-snapshot-local/com/myjfrog/demo/${buildNumber}-SNAPSHOT/demo-*.jar",
+                  "pattern": "myteam-maven-dev-local/com/myjfrog/demo/${buildNumber}-SNAPSHOT/demo-*.jar",
                   "target": "/myzips/downloads/",
                   "flat": "true"
                 }
