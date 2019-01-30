@@ -27,7 +27,7 @@ timestamps {
         def distributionUrl = params.distributionUrl
         def releaseBundleName = 'my-project-bundle'
         def pipelineUtils
-        def artifactoryCredentialId = 'artifactory-login'
+        def artifactoryCredentialId = 'orendemo-login'
 
         stage("checkout") {
             checkout scm
@@ -60,10 +60,29 @@ timestamps {
             buildInfo.name = mavenBuildName
             buildInfo.env.collect()
             rtMaven.run pom: 'demo/pomForEplus.xml', goals: mvnGoals, buildInfo: buildInfo
-            echo "===========after build========"
-
             server.publishBuildInfo buildInfo
-            echo "=========after publish=========="
+        }
+
+        stage("static code analysis") {
+
+
+        }
+
+        stage("Promote to stage") {
+
+            def promotionConfig = [
+                    'buildName'  : buildInfo.name,
+                    'buildNumber': buildInfo.number,
+                    'targetRepo' : stagingPromotionRepo,
+                    'comment'    : 'This is a stable java-project version',
+                    'status'     : 'Released',
+                    'sourceRepo' : 'myteam-maven-dev-local',
+                    'copy'       : true,
+                    'failFast'   : true
+            ]
+
+            server.promote promotionConfig
+
         }
 
         stage("Scan") {
@@ -76,15 +95,15 @@ timestamps {
             server.xrayScan scanConfig
         }
 
-        stage("Promote") {
+        stage("Promote to prod") {
 
             def promotionConfig = [
                     'buildName'  : buildInfo.name,
                     'buildNumber': buildInfo.number,
-                    'targetRepo' : stagingPromotionRepo,
-                    'comment'    : 'This is a stable java-project version',
-                    'status'     : 'Released',
-                    'sourceRepo' : 'myteam-maven-dev-local',
+                    'targetRepo' : prodPromotionRepo,
+                    'comment'    : 'This is a strelease ready java-project version',
+                    'status'     : 'Scanned',
+                    'sourceRepo' : 'myteam-maven-stage-local',
                     'copy'       : true,
                     'failFast'   : true
             ]
@@ -165,7 +184,7 @@ timestamps {
                 \"\$and\": [
                         {
                             \"repo\": {
-                            \"\$match\": \"my-stable-*-repo\"
+                            \"\$match\": \"myteam-maven-prod-repo\"
                         }
                         },
                         {
@@ -188,7 +207,7 @@ timestamps {
             def releaseBundleBody = [
                     'name': "${releaseBundleName}",
                     'version': "${buildNumber}",
-                    'dry_run': false,
+                    'dry_run': true,
                     'sign_immediately': true,
                     'description': 'Release bundle for the example java-project',
                     'spec': [
