@@ -4,7 +4,7 @@ properties(
     [
         parameters(
             [
-                string(name: 'distributionUrl',defaultValue: 'http://35.240.119.121', description: 'Distribution server URL')
+                string(name: 'distributionUrl',defaultValue: 'https://distribution-orendemo.jfrogdev.co', description: 'Distribution server URL')
             ]
         )
     ]
@@ -45,7 +45,7 @@ timestamps {
             mavenBuildName = "maven-${jobName}"
             dockerBuildName = "docker-${jobName}"
             server = Artifactory.server "oren_remote"
-            rtFullUrl = server.url
+            rtFullUrl = server.url      
             rtIpAddress = rtFullUrl - ~/^http?.:\/\// - ~/\/artifactory$/
             pipelineUtils = load 'demo/pipelineUtils.groovy'
         }
@@ -59,7 +59,10 @@ timestamps {
             buildInfo.name = mavenBuildName
             buildInfo.env.collect()
             rtMaven.run pom: 'demo/pomForEplus.xml', goals: mvnGoals, buildInfo: buildInfo
+            echo "===========after build========"
+
             server.publishBuildInfo buildInfo
+            echo "=========after publish=========="
         }
 
         stage("Scan") {
