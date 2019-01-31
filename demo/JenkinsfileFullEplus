@@ -175,9 +175,7 @@ timestamps {
 */        
 //*
         stage("Create release bundle") {
-echo "===========before rest call============="
             rtServiceId = pipelineUtils.restGet("${rtFullUrl}/api/system/service_id", artifactoryCredentialId)
-echo "===========after rest call============="
 
 
       def aqlQuery = """
@@ -214,6 +212,8 @@ echo "===========after rest call============="
             })
             """.replaceAll(" ", "").replaceAll("\n", "")
 */
+echo "===========before RB call============="
+
             def releaseBundleBody = [
                     'name': "${releaseBundleName}",
                     'version': "${buildNumber}",
@@ -232,10 +232,12 @@ echo "===========after rest call============="
             ]
 
             releaseBundleBodyJson = JsonOutput.toJson(releaseBundleBody)
+echo "===========after JSON creation============="
 
 
             res = pipelineUtils.restPost("${distributionUrl}/api/v1/release_bundle", artifactoryCredentialId, releaseBundleBodyJson)
-        }
+ echo "===========after rest call============="
+       }
 //*/
 /*
         stage('Distribute release bundle') {
