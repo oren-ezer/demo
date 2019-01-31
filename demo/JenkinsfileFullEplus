@@ -234,6 +234,7 @@ echo "===========before RB call============="
             releaseBundleBodyJson = JsonOutput.toJson(releaseBundleBody)
 echo "===========after JSON creation============="
 
+echo $releaseBundleBodyJson
 
             res = pipelineUtils.restPost("${distributionUrl}/api/v1/release_bundle", artifactoryCredentialId, releaseBundleBodyJson)
  echo "===========after rest call============="
