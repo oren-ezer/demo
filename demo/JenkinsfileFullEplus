@@ -180,6 +180,15 @@ echo "===========before rest call============="
 echo "===========after rest call============="
 
 
+      def aqlQuery = """
+        items.find{
+            \"repo\":{
+                \"\$match\":\"myteam-*-prod-local\"
+            }
+        }
+      """
+
+/*
             def aqlQuery = """
             items.find({
                 \"\$and\": [
@@ -204,7 +213,7 @@ echo "===========after rest call============="
                 ]
             })
             """.replaceAll(" ", "").replaceAll("\n", "")
-
+*/
             def releaseBundleBody = [
                     'name': "${releaseBundleName}",
                     'version': "${buildNumber}",
