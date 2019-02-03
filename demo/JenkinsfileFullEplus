@@ -217,9 +217,13 @@ echo "===========before RB call============="
             def releaseBundleBody = [
                     'name': "${releaseBundleName}",
                     'version': "${buildNumber}",
-                    'dry_run': true,
+                    'dry_run': false,
                     'sign_immediately': true,
                     'description': 'Release bundle for the example java-project',
+                    'release_notes': [
+                        'syntax': "plain_text",
+                        'content': "my release notes are very important"
+                    ],
                     'spec': [
                             'source_artifactory_id': "${rtServiceId}",
                             'queries': [
