@@ -28,6 +28,10 @@ timestamps {
         def pipelineUtils
         def artifactoryCredentialId = 'orendemo_login'
 
+        stage("checkout") {
+            checkout scm
+        }
+
         stage("preparations") {
             buildNumber = env.BUILD_NUMBER
             def jobName = env.JOB_NAME
@@ -46,10 +50,6 @@ timestamps {
             rtFullUrl = server.url      
             rtIpAddress = rtFullUrl - ~/^http?.:\/\// - ~/\/artifactory$/
             pipelineUtils = load 'demo/pipelineUtils.groovy'
-        }
-
-        stage("checkout") {
-            checkout scm
         }
 
         stage("Build and Publish") {
