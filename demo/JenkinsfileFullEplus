@@ -25,7 +25,7 @@ timestamps {
         def stagingPromotionRepo = 'myteam-maven-stage-local'
         def prodPromotionRepo = 'myteam-maven-prod-local'
         def distributionUrl = params.distributionUrl
-        def releaseBundleName = 'my-project-bundle'
+        def releaseBundleName = 'myteam-project-bundle'
         def pipelineUtils
         def artifactoryCredentialId = 'orendemo_login'
 
@@ -178,7 +178,8 @@ timestamps {
             rtServiceId = pipelineUtils.restGet("${rtFullUrl}/api/system/service_id", artifactoryCredentialId)
 
 
-            def aqlQuery = 'items.find({"repo":{"$match":"myteam-*-prod-local"}})'
+            // def aqlQuery = 'items.find({"repo":{"$match":"myteam-*-prod-local"}})'
+            def aqlQuery = 'items.find( { "$and":[ { "repo":{"$match":"myteam-*-prod-local"} }, { "@build.number":"22" } ] } )''
 /*
       def aqlQuery = """
         items.find(
@@ -216,7 +217,6 @@ timestamps {
             })
             """.replaceAll(" ", "").replaceAll("\n", "")
 */
-echo "===========before RB call============="
 
             def releaseBundleBody = [
                     'name': "${releaseBundleName}",
@@ -240,13 +240,13 @@ echo "===========before RB call============="
             ]
 
             releaseBundleBodyJson = JsonOutput.toJson(releaseBundleBody)
-echo "===========after JSON creation============="
+//echo "===========after JSON creation============="
 
-echo "${releaseBundleBodyJson}"
+//echo "${releaseBundleBodyJson}"
 
-echo "===========after JSON output============="
+//echo "===========after JSON output============="
             res = pipelineUtils.restPost("${distributionUrl}/api/v1/release_bundle", artifactoryCredentialId, releaseBundleBodyJson)
- echo "===========after rest call============="
+ //echo "===========after rest call============="
        }
 //*/
 /*
