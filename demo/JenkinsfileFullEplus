@@ -179,11 +179,13 @@ timestamps {
 
 
       def aqlQuery = """
-        items.find{
-            \"repo\":{
-                \"\$match\":\"myteam-*-prod-local\"
+        items.find(
+            {
+                \"repo\":{
+                    \"\$match\":\"myteam-*-prod-local\"
+                }
             }
-        }
+        )
       """
 
 /*
