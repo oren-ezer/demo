@@ -28,6 +28,19 @@ timestamps {
         def pipelineUtils
         def artifactoryCredentialId = 'orendemo_login'
 
+
+
+
+        stage("install CLI") {
+            //this stage should only run once for jfrog CLI download and installation
+            echo "===============before downloading jfrog cli===================="
+            sh 'pwd'
+            sh 'curl -fL https://getcli.jfrog.io | sh'
+            sh "ls -la"
+            sh "chmod +x ./jfrog"
+            echo "===============after downloading jfrog cli===================="
+        }
+/*
         stage("checkout") {
             checkout scm
         }
@@ -175,4 +188,5 @@ timestamps {
             println "${jsonResult}"                
         }      
     }
+*/    
 }
