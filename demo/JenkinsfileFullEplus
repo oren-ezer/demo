@@ -26,7 +26,7 @@ timestamps {
         def stagingPromotionRepo = 'myteam-maven-stage-local'
         def prodPromotionRepo = 'myteam-maven-prod-local'
         def distributionUrl = params.distributionUrl
-        def releaseBundleName = 'myteam-project-bundle'
+        def releaseBundleName = params.releaseBundleName
         def pipelineUtils
         def artifactoryCredentialId = 'orendemo_login'
 

@@ -4,7 +4,8 @@ properties(
     [
         parameters(
             [
-                string(name: 'distributionUrl',defaultValue: 'http://35.195.75.184', description: 'Distribution server URL')
+                string(name: 'distributionUrl',defaultValue: 'https://distribution-orendemo.jfrogdev.co', description: 'Distribution server URL'),
+                string(name: 'releaseBundleName',defaultValue: 'myteam-project-bundle', description: 'release bundle name for distribution')
             ]
         )
     ]
@@ -12,56 +13,72 @@ properties(
 
 timestamps {
 
-    node('generic') {
+    node {
 
         def server
         def rtFullUrl
         def rtIpAddress
         def buildNumber
-        def mavenBuildName
-        def dockerBuildName
-        def mavenPromotionRepo = 'stable-maven-repo'
+        def buildName
+        def buildInfo
+        def stagingPromotionRepo = 'myteam-maven-stage-local'
+        def prodPromotionRepo = 'myteam-maven-prod-local'
         def distributionUrl = params.distributionUrl
-        def releaseBundleName = 'java-project-bundle'
+        def releaseBundleName = params.releaseBundleName
         def pipelineUtils
-        def artifactoryCredentialId = 'artifactory-login'
+        def artifactoryCredentialId = 'orendemo_login'
+
+        stage("preparations") {
+            buildNumber = env.BUILD_NUMBER
+            def jobName = env.JOB_NAME
+
+            echo '==================='
+            echo 'pwd:'
+            sh 'pwd'
+            echo 'ls:'
+            sh "ls -la"
+            echo "build number: ${buildNumber}"
+            echo "job name: ${jobName}"
+            echo "==================="
+
+            buildName = "maven-${jobName}"
+            server = Artifactory.server "oren_remote"
+            rtFullUrl = server.url      
+            rtIpAddress = rtFullUrl - ~/^http?.:\/\// - ~/\/artifactory$/
+            pipelineUtils = load 'demo/pipelineUtils.groovy'
+        }
 
         stage("checkout") {
             checkout scm
-            buildNumber = env.BUILD_NUMBER
-            def jobName = env.JOB_NAME
-            mavenBuildName = "maven-${jobName}"
-            dockerBuildName = "docker-${jobName}"
-            server = Artifactory.server "local-artifactory"
-            rtFullUrl = server.url
-            rtIpAddress = rtFullUrl - ~/^http?.:\/\// - ~/\/artifactory$/
-            pipelineUtils = load 'pipelineUtils.groovy'
         }
 
-        stage("Build+Deploy") {
+        stage("Build and Publish") {
             def rtMaven = Artifactory.newMavenBuild()
-            rtMaven.deployer server: server, releaseRepo: 'libs-snapshot-local', snapshotRepo: 'libs-snapshot-local'
-            rtMaven.tool = 'maven-3.5.3'
-            String mvnGoals = "-B clean install -DartifactVersion=${buildNumber} -s settings.xml"
-            def buildInfo = Artifactory.newBuildInfo()
-            buildInfo.name = mavenBuildName
+            rtMaven.deployer server: server, releaseRepo: 'myteam-maven-dev-local', snapshotRepo: 'myteam-maven-dev-local'
+            rtMaven.tool = 'mavenTool'
+            String mvnGoals = "-B clean install -DartifactVersion=${buildNumber} -s demo/settings.xml"
+            buildInfo = Artifactory.newBuildInfo()
+            buildInfo.name = buildName
             buildInfo.env.collect()
-            rtMaven.run pom: 'pom.xml', goals: mvnGoals, buildInfo: buildInfo
+            rtMaven.run pom: 'demo/pomForEplus.xml', goals: mvnGoals, buildInfo: buildInfo
             server.publishBuildInfo buildInfo
-            def scanConfig = [
-                    'buildName'  : buildInfo.name,
-                    'buildNumber': buildInfo.number,
-                    'failBuild'  : true
-            ]
-            server.xrayScan scanConfig
+        }
+
+        stage("static code analysis") {
+            //generate sleeping time between 2 to 7 seconds
+            def sleepingTime = Math.abs(new Random().nextInt() % ([7] - [2])) + [2]
+            sleep(sleepingTime)
+        }
+
+        stage("Promote to stage") {
 
             def promotionConfig = [
                     'buildName'  : buildInfo.name,
                     'buildNumber': buildInfo.number,
-                    'targetRepo' : mavenPromotionRepo,
+                    'targetRepo' : stagingPromotionRepo,
                     'comment'    : 'This is a stable java-project version',
                     'status'     : 'Released',
-                    'sourceRepo' : 'libs-snapshot-local',
+                    'sourceRepo' : 'myteam-maven-dev-local',
                     'copy'       : true,
                     'failFast'   : true
             ]
@@ -70,76 +87,52 @@ timestamps {
 
         }
 
-        stage("Build docker image") {
-            def dockerBuildInfo = Artifactory.newBuildInfo()
-            dockerBuildInfo.name = dockerBuildName
-            def downloadSpec = """{
-             "files": [
-              {
-                  "pattern": "libs-snapshot-local/com/mkyong/hashing/java-project/${buildNumber}-SNAPSHOT/java-project-*.jar",
-                  "target": "target/downloads/",
-                  "flat": "true"
-                }
-             ]
-            }"""
+        stage("Scan") {
 
-            server.download spec: downloadSpec, buildInfo: dockerBuildInfo
-            def rtDocker = Artifactory.docker server: server
-            def dockerImageTag = "${rtIpAddress}/docker-java:${buildNumber}"
-            docker.build(dockerImageTag, "--build-arg DOCKER_REGISTRY_URL=${rtIpAddress} .")
-            dockerBuildInfo.env.collect()
-            rtDocker.push(dockerImageTag, 'docker-repo', dockerBuildInfo)
-            server.publishBuildInfo dockerBuildInfo
-            def dockerScanConfig = [
-                    'buildName'  : dockerBuildInfo.name,
-                    'buildNumber': dockerBuildInfo.number,
+            def scanConfig = [
+                    'buildName'  : buildInfo.name,
+                    'buildNumber': buildInfo.number,
                     'failBuild'  : true
             ]
-            server.xrayScan dockerScanConfig
+            // server.xrayScan scanConfig
+        }
 
-            def dockerPromotionConfig = [
-                    'buildName'  : dockerBuildInfo.name,
-                    'buildNumber': dockerBuildInfo.number,
-                    'targetRepo' : 'stable-docker-repo',
-                    'comment'    : 'This is a stable java-project docker image',
-                    'status'     : 'Released',
-                    'sourceRepo' : 'docker-repo',
+        stage("Promote to prod") {
+
+            def promotionConfig = [
+                    'buildName'  : buildInfo.name,
+                    'buildNumber': buildInfo.number,
+                    'targetRepo' : prodPromotionRepo,
+                    'comment'    : 'This is a release ready java-project version',
+                    'status'     : 'Scanned',
+                    'sourceRepo' : 'myteam-maven-stage-local',
                     'copy'       : true,
                     'failFast'   : true
             ]
 
-            server.promote dockerPromotionConfig
+            server.promote promotionConfig
+
         }
 
         stage("Create release bundle") {
-
             rtServiceId = pipelineUtils.restGet("${rtFullUrl}/api/system/service_id", artifactoryCredentialId)
 
-
+            // def aqlQuery = 'items.find({"repo":{"$match":"myteam-*-prod-local"}})'
+            // def aqlQuery = 'items.find( { "$and":[ { "repo":{"$match":"myteam-*-prod-local"} }, { "@build.number":"27" } ] } )'
+            // def aqlQuery = """items.find( { \"\$and\":[ { \"repo\":{\"\$match\":\"myteam-*-prod-local\"} }, { \"@build.number\":\"${buildNumber}\" } ] } )"""
             def aqlQuery = """
-            items.find({
-                \"\$and\": [
-                        {
-                            \"repo\": {
-                            \"\$match\": \"stable-*-repo\"
-                        }
-                        },
-                        {
-                            \"\$or\": [
-                                {
-                                    \"@build.name\": \"${mavenBuildName}\"
-                                },
-                                {
-                                    \"@build.name\": \"${dockerBuildName}\"
-                                }
-                        ]
-                        },
-                        {
-                            \"@build.number\": \"${buildNumber}\"
-                        }
-                ]
-            })
-            """.replaceAll(" ", "").replaceAll("\n", "")
+            items.find( 
+                { \"\$and\":[ 
+                    { \"repo\":
+                        {\"\$match\":\"myteam-*-prod-local\"} 
+                    }, 
+                    { 
+                        \"@build.number\":\"${buildNumber}\" 
+                    } 
+                ]} 
+            )
+            """
+            aqlQuery = aqlQuery.replaceAll(" ", "").replaceAll("\n", "")
 
             def releaseBundleBody = [
                     'name': "${releaseBundleName}",
@@ -147,6 +140,10 @@ timestamps {
                     'dry_run': false,
                     'sign_immediately': true,
                     'description': 'Release bundle for the example java-project',
+                    'release_notes': [
+                        'syntax': "plain_text",
+                        'content': "myteam release notes are very important"
+                    ],
                     'spec': [
                             'source_artifactory_id': "${rtServiceId}",
                             'queries': [
@@ -159,35 +156,23 @@ timestamps {
             ]
 
             releaseBundleBodyJson = JsonOutput.toJson(releaseBundleBody)
+// echo "===========after JSON creation============="
 
+// echo "${releaseBundleBodyJson}"
 
+// echo "===========after JSON output============="
             res = pipelineUtils.restPost("${distributionUrl}/api/v1/release_bundle", artifactoryCredentialId, releaseBundleBodyJson)
-        }
+ //echo "===========after rest call============="
+       }
+
 
         stage('Distribute release bundle') {
-            def distributeReleaseBundleBody = readJSON file: 'distribute-release-bundle-body.json'
+            def distributeReleaseBundleBody = '{"dry_run": false, "distribution_rules": [{"service_name": "*edge*"}]}'
             res = pipelineUtils.restPost("${distributionUrl}/api/v1/distribution/${releaseBundleName}/${buildNumber}", artifactoryCredentialId, distributeReleaseBundleBody.toString())
 
-            for (i = 0; true; i++) {
-                res = pipelineUtils.restGet("${distributionUrl}/api/v1/release_bundle/${releaseBundleName}/${buildNumber}/distribution", artifactoryCredentialId)
-
-                def jsonResult = readJSON text: res
-                def distributionStatus = jsonResult.status.unique()
-                distributionStatus = distributionStatus.collect { it.toUpperCase() }
-                println "Current status:  ${distributionStatus}"
-
-                if (distributionStatus == ['COMPLETED']) {
-                    println "Distribution finished successfully"
-                    break
-                } else if (distributionStatus.contains('FAILED')) {
-                    error("Distribution failed. Response body: ${jsonResult}")
-                } else if (i >= 30) {
-                    error("Timed out waiting for distribution to complete")
-                }
-
-                sleep 2
-
-            }
-        }
+            def jsonResult = readJSON text: res
+            println "the result is: "
+            println "${jsonResult}"                
+        }      
     }
 }
