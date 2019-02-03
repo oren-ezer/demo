@@ -30,7 +30,7 @@ timestamps {
 
 
 
-
+/*
         stage("install CLI") {
             //this stage should only run once for jfrog CLI download and installation
             echo "===============before downloading jfrog cli===================="
@@ -40,7 +40,8 @@ timestamps {
             sh "chmod +x ./jfrog"
             echo "===============after downloading jfrog cli===================="
         }
-/*
+*/
+
         stage("checkout") {
             checkout scm
         }
@@ -65,6 +66,11 @@ timestamps {
             pipelineUtils = load 'demo/pipelineUtils.groovy'
         }
 
+        stage("create build context") {
+            sh "./jfrog rt bce ${buildName} ${buildNumber}"
+        }
+
+/*
         stage("Build and Publish") {
             def rtMaven = Artifactory.newMavenBuild()
             rtMaven.deployer server: server, releaseRepo: 'myteam-maven-dev-local', snapshotRepo: 'myteam-maven-dev-local'
