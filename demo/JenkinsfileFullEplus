@@ -226,7 +226,7 @@ echo "===========after JSON output============="
 echo "===========after rest call============="
                 def jsonResult = readJSON text: res
 echo "${jsonResult}"                
-                def distributionStatus = jsonResult.status.unique()
+                def distributionStatus = jsonResult.sites.status.unique()
 echo "${distributionStatus}"                  
                 distributionStatus = distributionStatus.collect { it.toUpperCase() }
 echo "${distributionStatus}"                   
