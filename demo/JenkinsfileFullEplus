@@ -223,10 +223,13 @@ echo "===========after JSON output============="
 
             for (i = 0; true; i++) {
                 res = pipelineUtils.restGet("${distributionUrl}/api/v1/release_bundle/${releaseBundleName}/${buildNumber}/distribution", artifactoryCredentialId)
-
+echo "===========after rest call============="
                 def jsonResult = readJSON text: res
+echo "${jsonResult}"                
                 def distributionStatus = jsonResult.status.unique()
+echo "${distributionStatus}"                  
                 distributionStatus = distributionStatus.collect { it.toUpperCase() }
+echo "${distributionStatus}"                   
                 println "Current status:  ${distributionStatus}"
 
                 if (distributionStatus == ['COMPLETED']) {
