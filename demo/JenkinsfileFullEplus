@@ -65,8 +65,8 @@ timestamps {
         }
 
         stage("static code analysis") {
-
-
+            // def sleepingTime = Math.abs(new Random().nextInt() % ([UPPER_LIMIT] - [LOWER_LIMIT])) + [LOWER_LIMIT]
+            sleep(5)
         }
 
         stage("Promote to stage") {
@@ -93,7 +93,7 @@ timestamps {
                     'buildNumber': buildInfo.number,
                     'failBuild'  : true
             ]
-            server.xrayScan scanConfig
+            // server.xrayScan scanConfig
         }
 
         stage("Promote to prod") {
