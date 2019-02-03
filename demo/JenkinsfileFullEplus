@@ -178,6 +178,8 @@ timestamps {
             rtServiceId = pipelineUtils.restGet("${rtFullUrl}/api/system/service_id", artifactoryCredentialId)
 
 
+            def aqlQuery = 'items.find({"repo":{"$match":"myteam-*-prod-local"}})'
+/*
       def aqlQuery = """
         items.find(
             {
@@ -187,7 +189,7 @@ timestamps {
             }
         )
       """
-
+*/
 /*
             def aqlQuery = """
             items.find({
