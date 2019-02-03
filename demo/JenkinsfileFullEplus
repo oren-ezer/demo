@@ -178,8 +178,8 @@ timestamps {
             rtServiceId = pipelineUtils.restGet("${rtFullUrl}/api/system/service_id", artifactoryCredentialId)
 
 
-            // def aqlQuery = 'items.find({"repo":{"$match":"myteam-*-prod-local"}})'
-            def aqlQuery = 'items.find( { "$and":[ { "repo":{"$match":"myteam-*-prod-local"} }, { "@build.number":"22" } ] } )''
+            def aqlQuery = 'items.find({"repo":{"$match":"myteam-*-prod-local"}})'
+            def aqlQuery = 'items.find( { "$and":[ { "repo":{"$match":"myteam-*-prod-local"} }, { "@build.number":"22" } ] } )'
 /*
       def aqlQuery = """
         items.find(
