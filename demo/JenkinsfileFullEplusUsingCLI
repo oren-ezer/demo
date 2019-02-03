@@ -30,9 +30,9 @@ timestamps {
 
 
 
-/*
+
         stage("install CLI") {
-            //this stage should only run once for jfrog CLI download and installation
+            //this stage can be ran only once for jfrog CLI download and installation but no harm like this
             echo "===============before downloading jfrog cli===================="
             sh 'pwd'
             sh 'curl -fL https://getcli.jfrog.io | sh'
@@ -40,7 +40,7 @@ timestamps {
             sh "chmod +x ./jfrog"
             echo "===============after downloading jfrog cli===================="
         }
-*/
+
 
         stage("checkout") {
             checkout scm
