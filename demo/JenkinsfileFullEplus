@@ -93,7 +93,7 @@ timestamps {
                     'buildNumber': buildInfo.number,
                     'failBuild'  : true
             ]
-            server.xrayScan scanConfig
+            // server.xrayScan scanConfig
         }
 
         stage("Promote to prod") {
@@ -180,7 +180,8 @@ timestamps {
 
 
             // def aqlQuery = 'items.find({"repo":{"$match":"myteam-*-prod-local"}})'
-            def aqlQuery = 'items.find( { "$and":[ { "repo":{"$match":"myteam-*-prod-local"} }, { "@build.number":"27" } ] } )'
+            // def aqlQuery = 'items.find( { "$and":[ { "repo":{"$match":"myteam-*-prod-local"} }, { "@build.number":"27" } ] } )'
+            def aqlQuery = """items.find( { \"\$and\":[ { \"repo\":{\"\$match\":\"myteam-*-prod-local\"} }, { \"@build.number\":\"27\" } ] } )"""
 /*
       def aqlQuery = """
         items.find(
