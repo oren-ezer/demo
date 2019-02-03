@@ -13,7 +13,6 @@ properties(
 
 timestamps {
 
-//    node('generic') {
     node {
 
         def server
@@ -30,8 +29,10 @@ timestamps {
         def pipelineUtils
         def artifactoryCredentialId = 'orendemo_login'
 
-        stage("checkout") {
+        stage("Checkout") {
             checkout scm
+        }
+        stage("Preparations") {
             buildNumber = env.BUILD_NUMBER
             def jobName = env.JOB_NAME
 
