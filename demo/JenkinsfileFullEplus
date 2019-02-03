@@ -94,7 +94,7 @@ timestamps {
                     'buildNumber': buildInfo.number,
                     'failBuild'  : true
             ]
-            server.xrayScan scanConfig
+            // server.xrayScan scanConfig
         }
 
         stage("Promote to prod") {
@@ -184,43 +184,6 @@ timestamps {
             // def aqlQuery = 'items.find( { "$and":[ { "repo":{"$match":"myteam-*-prod-local"} }, { "@build.number":"27" } ] } )'
             def aqlQuery = """items.find( { \"\$and\":[ { \"repo\":{\"\$match\":\"myteam-*-prod-local\"} }, { \"@build.number\":\"${buildNumber}\" } ] } )"""
             aqlQuery = aqlQuery.replaceAll(" ", "").replaceAll("\n", "")
-/*
-      def aqlQuery = """
-        items.find(
-            {
-                \"repo\":{
-                    \"\$match\":\"myteam-*-prod-local\"
-                }
-            }
-        )
-      """
-*/
-/*
-            def aqlQuery = """
-            items.find({
-                \"\$and\": [
-                        {
-                            \"repo\": {
-                            \"\$match\": \"myteam-maven-prod-repo\"
-                        }
-                        },
-                        {
-                            \"\$or\": [
-                                {
-                                    \"@build.name\": \"${mavenBuildName}\"
-                                },
-                                {
-                                    \"@build.name\": \"${dockerBuildName}\"
-                                }
-                        ]
-                        },
-                        {
-                            \"@build.number\": \"${buildNumber}\"
-                        }
-                ]
-            })
-            """.replaceAll(" ", "").replaceAll("\n", "")
-*/
 
             def releaseBundleBody = [
                     'name': "${releaseBundleName}",
@@ -230,7 +193,7 @@ timestamps {
                     'description': 'Release bundle for the example java-project',
                     'release_notes': [
                         'syntax': "plain_text",
-                        'content': "my release notes are very important"
+                        'content': "myteam release notes are very important"
                     ],
                     'spec': [
                             'source_artifactory_id': "${rtServiceId}",
@@ -253,9 +216,18 @@ echo "===========after JSON output============="
  //echo "===========after rest call============="
        }
 //*/
-/*
+
         stage('Distribute release bundle') {
-            def distributeReleaseBundleBody = readJSON file: 'distribute-release-bundle-body.json'
+            def distributeReleaseBundleBody = '
+{
+  "dry_run": false,
+  "distribution_rules": [
+    {
+      "service_name": "*edge*"
+    }
+  ]
+}
+'
             res = pipelineUtils.restPost("${distributionUrl}/api/v1/distribution/${releaseBundleName}/${buildNumber}", artifactoryCredentialId, distributeReleaseBundleBody.toString())
 
             for (i = 0; true; i++) {
@@ -278,7 +250,6 @@ echo "===========after JSON output============="
                 sleep 2
 
             }
-        }
-*/        
+        }      
     }
 }
