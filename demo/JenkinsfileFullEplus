@@ -65,8 +65,9 @@ timestamps {
         }
 
         stage("static code analysis") {
-            // def sleepingTime = Math.abs(new Random().nextInt() % ([UPPER_LIMIT] - [LOWER_LIMIT])) + [LOWER_LIMIT]
-            sleep(5)
+            //generate sleeping time between 2 to 7 seconds
+            def sleepingTime = Math.abs(new Random().nextInt() % ([7] - [2])) + [2]
+            sleep(sleepingTime)
         }
 
         stage("Promote to stage") {
