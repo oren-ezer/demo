@@ -182,6 +182,7 @@ timestamps {
             // def aqlQuery = 'items.find({"repo":{"$match":"myteam-*-prod-local"}})'
             // def aqlQuery = 'items.find( { "$and":[ { "repo":{"$match":"myteam-*-prod-local"} }, { "@build.number":"27" } ] } )'
             def aqlQuery = """items.find( { \"\$and\":[ { \"repo\":{\"\$match\":\"myteam-*-prod-local\"} }, { \"@build.number\":\"27\" } ] } )"""
+            aqlQuery = aqlQuery.replaceAll(" ", "").replaceAll("\n", "")
 /*
       def aqlQuery = """
         items.find(
