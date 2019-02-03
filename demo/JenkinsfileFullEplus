@@ -218,16 +218,7 @@ echo "===========after JSON output============="
 //*/
 
         stage('Distribute release bundle') {
-            def distributeReleaseBundleBody = '
-{
-  "dry_run": false,
-  "distribution_rules": [
-    {
-      "service_name": "*edge*"
-    }
-  ]
-}
-'
+            def distributeReleaseBundleBody = '{"dry_run": false, "distribution_rules": [{"service_name": "*edge*"}]}'
             res = pipelineUtils.restPost("${distributionUrl}/api/v1/distribution/${releaseBundleName}/${buildNumber}", artifactoryCredentialId, distributeReleaseBundleBody.toString())
 
             for (i = 0; true; i++) {
