@@ -207,43 +207,23 @@ timestamps {
             ]
 
             releaseBundleBodyJson = JsonOutput.toJson(releaseBundleBody)
-echo "===========after JSON creation============="
+// echo "===========after JSON creation============="
 
-echo "${releaseBundleBodyJson}"
+// echo "${releaseBundleBodyJson}"
 
-echo "===========after JSON output============="
+// echo "===========after JSON output============="
             res = pipelineUtils.restPost("${distributionUrl}/api/v1/release_bundle", artifactoryCredentialId, releaseBundleBodyJson)
  //echo "===========after rest call============="
        }
-//*/
+
 
         stage('Distribute release bundle') {
             def distributeReleaseBundleBody = '{"dry_run": false, "distribution_rules": [{"service_name": "*edge*"}]}'
             res = pipelineUtils.restPost("${distributionUrl}/api/v1/distribution/${releaseBundleName}/${buildNumber}", artifactoryCredentialId, distributeReleaseBundleBody.toString())
 
-            for (i = 0; true; i++) {
-                res = pipelineUtils.restGet("${distributionUrl}/api/v1/release_bundle/${releaseBundleName}/${buildNumber}/distribution", artifactoryCredentialId)
-echo "===========after rest call============="
-                def jsonResult = readJSON text: res
-echo "${jsonResult}"                
-                def distributionStatus = jsonResult.sites.status.unique()
-echo "${distributionStatus}"                  
-                distributionStatus = distributionStatus.collect { it.toUpperCase() }
-echo "${distributionStatus}"                   
-                println "Current status:  ${distributionStatus}"
-
-                if (distributionStatus == ['COMPLETED']) {
-                    println "Distribution finished successfully"
-                    break
-                } else if (distributionStatus.contains('FAILED')) {
-                    error("Distribution failed. Response body: ${jsonResult}")
-                } else if (i >= 30) {
-                    error("Timed out waiting for distribution to complete")
-                }
-
-                sleep 2
-
-            }
+            def jsonResult = readJSON text: res
+            println "the result is: "
+            println "${jsonResult}"                
         }      
     }
 }
