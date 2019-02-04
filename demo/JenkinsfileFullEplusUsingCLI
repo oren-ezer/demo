@@ -21,6 +21,7 @@ timestamps {
         def buildNumber
         def buildName
         def buildInfo
+        def devRepo = 'myteam-maven-dev-local'
         def stagingPromotionRepo = 'myteam-maven-stage-local'
         def prodPromotionRepo = 'myteam-maven-prod-local'
         def distributionUrl = params.distributionUrl
@@ -100,20 +101,7 @@ timestamps {
         }
 
         stage("Promote to stage") {
-            sh "./jfrog rt bpr ${buildName} ${buildNumber} stagingPromotionRepo --comment='This is a stable java-project version' --status='Released' --source-repo='myteam-maven-dev-local' --copy=true
-            def promotionConfig = [
-                    'buildName'  : buildInfo.name,
-                    'buildNumber': buildInfo.number,
-                    'targetRepo' : stagingPromotionRepo,
-                    'comment'    : 'This is a stable java-project version',
-                    'status'     : 'Released',
-                    'sourceRepo' : 'myteam-maven-dev-local',
-                    'copy'       : true,
-                    'failFast'   : true
-            ]
-
-            server.promote promotionConfig
-
+            sh "./jfrog rt bpr ${buildName} ${buildNumber} stagingPromotionRepo --comment='This is a stable java-project version' --status='Released' --source-repo='myteam-maven-dev-local' --copy=true"
         }
 /*
         stage("Scan") {
