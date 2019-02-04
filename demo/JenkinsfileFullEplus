@@ -53,6 +53,10 @@ timestamps {
             pipelineUtils = load 'demo/pipelineUtils.groovy'
         }
 
+        stage("create build context"){
+            
+        }
+
         stage("Build+Deploy") {
             def rtMaven = Artifactory.newMavenBuild()
             rtMaven.deployer server: server, releaseRepo: 'myteam-maven-dev-local', snapshotRepo: 'myteam-maven-dev-local'
@@ -95,7 +99,7 @@ timestamps {
                     'buildNumber': buildInfo.number,
                     'failBuild'  : true
             ]
-            // server.xrayScan scanConfig
+            server.xrayScan scanConfig
         }
 
         stage("Promote to prod") {

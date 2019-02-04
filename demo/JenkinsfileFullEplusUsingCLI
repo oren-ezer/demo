@@ -107,24 +107,11 @@ timestamps {
         stage("Scan") {
             sh "./jfrog rt bs ${buildName} ${buildNumber}"
         }
-/*
+
         stage("Promote to prod") {
-
-            def promotionConfig = [
-                    'buildName'  : buildInfo.name,
-                    'buildNumber': buildInfo.number,
-                    'targetRepo' : prodPromotionRepo,
-                    'comment'    : 'This is a release ready java-project version',
-                    'status'     : 'Scanned',
-                    'sourceRepo' : 'myteam-maven-stage-local',
-                    'copy'       : true,
-                    'failFast'   : true
-            ]
-
-            server.promote promotionConfig
-
+            sh "./jfrog rt bpr ${buildName} ${buildNumber} ${prodPromotionRepo} --comment='This is a release ready java-project version' --status='Scanned' --source-repo=${stagePromotionRepo} --copy=true"
         }
-
+/*
         stage("Create release bundle") {
             rtServiceId = pipelineUtils.restGet("${rtFullUrl}/api/system/service_id", artifactoryCredentialId)
 
