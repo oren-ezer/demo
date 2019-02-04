@@ -71,12 +71,11 @@ timestamps {
         }
 
         stage("maven build") {
-            /*
+            //aquiring M2_HOME for 'jfrog rt mvn' command
             env.M2_HOME= tool "mavenTool"
-            echo "=====================home================"
+            echo "=====================M2_HOME================"
             echo env.M2_HOME
-            echo "=====================home================"
-*/
+ 
             //creating the config file
             sh 'echo "version: 1\ntype: maven\nresolver:\n  snapshotRepo: jcenter\n  releaseRepo: jcenter\n  serverID: oren_remote\ndeployer:\n  snapshotRepo: myteam-maven-dev-local\n  releaseRepo: myteam-maven-dev-local\n  serverID: oren_remote" > ./config.txt'
             sh 'cat ./config.txt'
@@ -86,7 +85,6 @@ timestamps {
             sh './jfrog rt c --interactive=false --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=admin --password=password oren_remote'
 
             echo '==============maven build starting==============='
-//            sh "./jfrog rt mvn 'clean install -f ./demo/pomForDockerWithRemoteArti.xml -DskipTests' ./config.txt --build-name=${buildName} --build-number=${buildNumber}"
             sh "./jfrog rt mvn 'clean install -f ./demo/pomForEplusUsingCLI.xml -DskipTests -DartifactVersion=${buildNumber}' ./config.txt --build-name=${buildName} --build-number=${buildNumber}"
         }
 
@@ -94,7 +92,7 @@ timestamps {
             //publish the build info including the enviroment info
             sh "./jfrog rt bp ${buildName} ${buildNumber}"  
         }
-/*
+
         stage("static code analysis") {
             //generate sleeping time between 2 to 7 seconds
             def sleepingTime = Math.abs(new Random().nextInt() % ([7] - [2])) + [2]
@@ -102,7 +100,7 @@ timestamps {
         }
 
         stage("Promote to stage") {
-
+            sh "./jfrog rt bpr ${buildName} ${buildNumber} stagingPromotionRepo --comment='This is a stable java-project version' --status='Released' --source-repo='myteam-maven-dev-local' --copy=true
             def promotionConfig = [
                     'buildName'  : buildInfo.name,
                     'buildNumber': buildInfo.number,
@@ -117,7 +115,7 @@ timestamps {
             server.promote promotionConfig
 
         }
-
+/*
         stage("Scan") {
 
             def scanConfig = [
