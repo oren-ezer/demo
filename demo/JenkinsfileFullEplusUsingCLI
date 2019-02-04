@@ -78,7 +78,7 @@ timestamps {
             echo env.M2_HOME
  
             //creating the config file
-            sh 'echo "version: 1\ntype: maven\nresolver:\n  snapshotRepo: jcenter\n  releaseRepo: jcenter\n  serverID: oren_remote\ndeployer:\n  snapshotRepo: myteam-maven-dev-local\n  releaseRepo: myteam-maven-dev-local\n  serverID: oren_remote" > ./config.txt'
+            sh "echo 'version: 1\ntype: maven\nresolver:\n  snapshotRepo: jcenter\n  releaseRepo: jcenter\n  serverID: oren_remote\ndeployer:\n  snapshotRepo: ${devRepo}\n  releaseRepo: myteam-${devRepo}\n  serverID: oren_remote' > ./config.txt"
             sh 'cat ./config.txt'
 
             //executing the build with the config file
@@ -101,7 +101,7 @@ timestamps {
         }
 
         stage("Promote to stage") {
-            sh "./jfrog rt bpr ${buildName} ${buildNumber} stagingPromotionRepo --comment='This is a stable java-project version' --status='Released' --source-repo='myteam-maven-dev-local' --copy=true"
+            sh "./jfrog rt bpr ${buildName} ${buildNumber} ${stagingPromotionRepo} --comment='This is a stable java-project version' --status='Released' --source-repo=${devRepo} --copy=true"
         }
 /*
         stage("Scan") {
