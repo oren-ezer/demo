@@ -88,20 +88,17 @@ timestamps {
 
             echo '==============maven build starting==============='
             sh "./jfrog rt mvn 'clean install -f ./demo/pomForDockerWithRemoteArti.xml -DskipTests' ./config.txt --build-name=${buildName} --build-number=${buildNumber}"
-        }
-/*
-        stage("Build and Publish") {
-            def rtMaven = Artifactory.newMavenBuild()
-            rtMaven.deployer server: server, releaseRepo: 'myteam-maven-dev-local', snapshotRepo: 'myteam-maven-dev-local'
-            rtMaven.tool = 'mavenTool'
-            String mvnGoals = "-B clean install -DartifactVersion=${buildNumber} -s demo/settings.xml"
-            buildInfo = Artifactory.newBuildInfo()
-            buildInfo.name = buildName
-            buildInfo.env.collect()
-            rtMaven.run pom: 'demo/pomForEplus.xml', goals: mvnGoals, buildInfo: buildInfo
-            server.publishBuildInfo buildInfo
+            // String mvnGoals = "-B clean install -DartifactVersion=${buildNumber} -s demo/settings.xml"
+            // rtMaven.run pom: 'demo/pomForEplus.xml', goals: mvnGoals, buildInfo: buildInfo
         }
 
+        stage("Publish") {
+            //collect environment info
+            sh "./jfrog rt bce ${buildName} ${buildNumber}"
+            //publish the build info including the enviroment info
+            sh "./jfrog rt bp ${buildName} ${buildNumber}"  
+        }
+/*
         stage("static code analysis") {
             //generate sleeping time between 2 to 7 seconds
             def sleepingTime = Math.abs(new Random().nextInt() % ([7] - [2])) + [2]
