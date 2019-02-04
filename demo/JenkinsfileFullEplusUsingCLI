@@ -88,7 +88,7 @@ timestamps {
 
             echo '==============maven build starting==============='
 //            sh "./jfrog rt mvn 'clean install -f ./demo/pomForDockerWithRemoteArti.xml -DskipTests' ./config.txt --build-name=${buildName} --build-number=${buildNumber}"
-            sh "./jfrog rt mvn '-B clean install -f ./demo/pomForEplusUsingCLI.xml -DskipTests -DartifactVersion=${buildNumber}' ./config.txt --build-name=${buildName} --build-number=${buildNumber}"
+            sh "./jfrog rt mvn 'clean install -f ./demo/pomForEplusUsingCLI.xml -DskipTests -DartifactVersion=${buildNumber}' ./config.txt --build-name=${buildName} --build-number=${buildNumber}"
         }
 
         stage("Publish") {
