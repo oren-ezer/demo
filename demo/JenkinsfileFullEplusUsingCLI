@@ -87,14 +87,11 @@ timestamps {
             sh './jfrog rt c --interactive=false --url=https://artifactory-orendemo.jfrogdev.co/artifactory/ --user=admin --password=password oren_remote'
 
             echo '==============maven build starting==============='
-            sh "./jfrog rt mvn 'clean install -f ./demo/pomForDockerWithRemoteArti.xml -DskipTests' ./config.txt --build-name=${buildName} --build-number=${buildNumber}"
-            // String mvnGoals = "-B clean install -DartifactVersion=${buildNumber} -s demo/settings.xml"
-            // rtMaven.run pom: 'demo/pomForEplus.xml', goals: mvnGoals, buildInfo: buildInfo
+//            sh "./jfrog rt mvn 'clean install -f ./demo/pomForDockerWithRemoteArti.xml -DskipTests' ./config.txt --build-name=${buildName} --build-number=${buildNumber}"
+            sh "./jfrog rt mvn '-B clean install -f ./demo/pomForEplusUsingCLI.xml -DskipTests -DartifactVersion=${buildNumber}' ./config.txt --build-name=${buildName} --build-number=${buildNumber}"
         }
 
         stage("Publish") {
-            //collect environment info
-            sh "./jfrog rt bce ${buildName} ${buildNumber}"
             //publish the build info including the enviroment info
             sh "./jfrog rt bp ${buildName} ${buildNumber}"  
         }
