@@ -103,17 +103,11 @@ timestamps {
         stage("Promote to stage") {
             sh "./jfrog rt bpr ${buildName} ${buildNumber} ${stagingPromotionRepo} --comment='This is a stable java-project version' --status='Released' --source-repo=${devRepo} --copy=true"
         }
-/*
+
         stage("Scan") {
-
-            def scanConfig = [
-                    'buildName'  : buildInfo.name,
-                    'buildNumber': buildInfo.number,
-                    'failBuild'  : true
-            ]
-            // server.xrayScan scanConfig
+            sh "./jfrog rt bs ${buildName} ${buildNumber}"
         }
-
+/*
         stage("Promote to prod") {
 
             def promotionConfig = [
