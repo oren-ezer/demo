@@ -110,7 +110,7 @@ timestamps {
         }
 
         stage("Create release bundle") {
-            rtServiceId = c.restGet("${rtFullUrl}/api/system/service_id", artifactoryCredentialId)
+            rtServiceId = pipelineUtils.restGet("${rtFullUrl}/api/system/service_id", artifactoryCredentialId)
 
             def aqlQuery = """
             items.find( 
