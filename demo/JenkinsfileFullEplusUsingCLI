@@ -109,8 +109,7 @@ timestamps {
         }
 
         stage("Promote to prod") {
-            // sh "./jfrog rt bpr ${buildName} ${buildNumber} ${prodPromotionRepo} --comment='This is a release ready java-project version' --status='Scanned' --source-repo=${stagePromotionRepo} --copy=true"
-            sh "./jfrog rt bpr ${buildName} ${buildNumber} ${prodPromotionRepo} --comment='This is a release ready java-project version' --status='Scanned' --source-repo=myteam-maven-stage-local --copy=true"
+            sh "./jfrog rt bpr ${buildName} ${buildNumber} ${prodPromotionRepo} --comment='This is a release ready java-project version' --status='Scanned' --source-repo=${stagingPromotionRepo} --copy=true"
         }
 /*
         stage("Create release bundle") {
