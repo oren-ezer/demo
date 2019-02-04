@@ -15,9 +15,7 @@ timestamps {
 
     node {
 
-        def server
         def rtFullUrl
-        def rtIpAddress
         def buildNumber
         def buildName
         def buildInfo
@@ -61,9 +59,8 @@ timestamps {
             echo "==================="
 
             buildName = "maven-${jobName}"
-            server = Artifactory.server "oren_remote"
+            def server = Artifactory.server "oren_remote"
             rtFullUrl = server.url      
-            rtIpAddress = rtFullUrl - ~/^http?.:\/\// - ~/\/artifactory$/
             pipelineUtils = load 'demo/pipelineUtils.groovy'
         }
 
@@ -111,13 +108,10 @@ timestamps {
         stage("Promote to prod") {
             sh "./jfrog rt bpr ${buildName} ${buildNumber} ${prodPromotionRepo} --comment='This is a release ready java-project version' --status='Scanned' --source-repo=${stagingPromotionRepo} --copy=true"
         }
-/*
-        stage("Create release bundle") {
-            rtServiceId = pipelineUtils.restGet("${rtFullUrl}/api/system/service_id", artifactoryCredentialId)
 
-            // def aqlQuery = 'items.find({"repo":{"$match":"myteam-*-prod-local"}})'
-            // def aqlQuery = 'items.find( { "$and":[ { "repo":{"$match":"myteam-*-prod-local"} }, { "@build.number":"27" } ] } )'
-            // def aqlQuery = """items.find( { \"\$and\":[ { \"repo\":{\"\$match\":\"myteam-*-prod-local\"} }, { \"@build.number\":\"${buildNumber}\" } ] } )"""
+        stage("Create release bundle") {
+            rtServiceId = c.restGet("${rtFullUrl}/api/system/service_id", artifactoryCredentialId)
+
             def aqlQuery = """
             items.find( 
                 { \"\$and\":[ 
@@ -172,6 +166,6 @@ timestamps {
             println "the result is: "
             println "${jsonResult}"                
         }  
-*/            
+            
     }  
 }
