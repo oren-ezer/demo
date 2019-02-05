@@ -150,7 +150,7 @@ timestamps {
             releaseBundleBodyJson = JsonOutput.toJson(releaseBundleBody)
 // echo "===========after JSON creation============="
 
-// echo "${releaseBundleBodyJson}"
+echo "${releaseBundleBodyJson}"
 
 // echo "===========after JSON output============="
             res = pipelineUtils.restPost("${distributionUrl}/api/v1/release_bundle", artifactoryCredentialId, releaseBundleBodyJson)
