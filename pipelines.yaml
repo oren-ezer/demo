@@ -55,7 +55,7 @@ resources:
 
 pipelines:
   - name: barebones_pipeline
-    steps:
+    steps: 
     - name: step_1
       type: Bash
       configuration:
