@@ -51,7 +51,7 @@ resources:
 #     configuration:
 #       sshKey: deploy_ssh
 #       targets:
-#         - 34.69.49.48
+#         - 34.69.49.48 this is 
 
 pipelines:
   - name: barebones_pipeline
